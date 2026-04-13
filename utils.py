@@ -1,7 +1,6 @@
 """
 utils.py — 문서 처리 유틸리티
-현재: 텍스트 추출 (PDF / TXT)
-추후: 청킹(Chunking), 벡터 DB 색인 등 확장 예정
+텍스트 추출 (PDF / TXT) · 청킹은 vectorstore.py의 RecursiveCharacterTextSplitter 사용
 """
 from __future__ import annotations
 
@@ -14,7 +13,6 @@ def extract_text_from_file(uploaded_file) -> str:
 
     if filename.endswith(".txt"):
         raw_bytes = uploaded_file.read()
-        # UTF-8 → Latin-1 순서로 디코딩 시도
         for encoding in ("utf-8", "utf-8-sig", "latin-1"):
             try:
                 return raw_bytes.decode(encoding)
@@ -30,33 +28,33 @@ def extract_text_from_file(uploaded_file) -> str:
 
 
 def _extract_pdf(uploaded_file) -> str:
-    """PDF 파일에서 텍스트를 추출 (pypdf 사용)."""
+    """PDF 파일에서 텍스트를 추출 (pdfplumber 우선, 실패 시 pypdf 폴백)."""
+    raw = uploaded_file.read()
+
+    # 1차 시도: pdfplumber (한글 폰트 처리 우수)
+    try:
+        import pdfplumber  # type: ignore
+        pages_text: list[str] = []
+        with pdfplumber.open(io.BytesIO(raw)) as pdf:
+            for page in pdf.pages:
+                text = page.extract_text()
+                if text:
+                    pages_text.append(text)
+        result = "\n\n".join(pages_text)
+        if result.strip():
+            return result
+    except Exception:
+        pass
+
+    # 2차 시도: pypdf 폴백
     try:
         import pypdf  # type: ignore
-    except ImportError:
-        raise ImportError(
-            "PDF 처리를 위해 pypdf 패키지가 필요합니다.\n"
-            "설치: pip install pypdf"
-        )
-
-    reader = pypdf.PdfReader(io.BytesIO(uploaded_file.read()))
-    pages_text: list[str] = []
-    for page in reader.pages:
-        text = page.extract_text()
-        if text:
-            pages_text.append(text)
-    return "\n\n".join(pages_text)
-
-
-def chunk_text(text: str, chunk_size: int = 1000, overlap: int = 200) -> list[str]:
-    """
-    텍스트를 chunk_size 단위로 분할 (RAG 인덱싱용).
-    향후 llm_logic.py의 벡터 DB 구축 단계에서 사용됩니다.
-    """
-    chunks: list[str] = []
-    start = 0
-    while start < len(text):
-        end = start + chunk_size
-        chunks.append(text[start:end])
-        start += chunk_size - overlap
-    return chunks
+        reader = pypdf.PdfReader(io.BytesIO(raw))
+        pages_text = []
+        for page in reader.pages:
+            text = page.extract_text()
+            if text:
+                pages_text.append(text)
+        return "\n\n".join(pages_text)
+    except Exception as e:
+        raise RuntimeError(f"PDF 텍스트 추출 실패: {e}")
