@@ -1,7 +1,8 @@
+import os
 import streamlit as st
 from pathlib import Path
 from utils import extract_text_from_file
-from llm_logic import get_rag_answer, generate_quiz
+from llm_logic import get_rag_answer, generate_quiz, detect_provider
 from vectorstore import build_vector_store, get_chunk_count
 
 # ── 페이지 기본 설정 ────────────────────────────────────────────────────────────
@@ -69,7 +70,29 @@ with st.sidebar:
 
     st.markdown('<hr class="section">', unsafe_allow_html=True)
 
-    # ── 2. 문서 업로드 ──────────────────────────────────────────────────────────
+    # ── 2. API Key ──────────────────────────────────────────────────────────────
+    st.subheader("🔑 API Key")
+
+    _PROVIDER_META = {
+        "anthropic": ("Anthropic API Key", "ANTHROPIC_API_KEY"),
+        "openai":    ("OpenAI API Key",    "OPENAI_API_KEY"),
+        "google":    ("Google API Key",    "GOOGLE_API_KEY"),
+        "groq":      ("Groq API Key",      "GROQ_API_KEY"),
+    }
+    _prov = detect_provider(selected_model_id)
+    _label, _env_var = _PROVIDER_META[_prov]
+
+    api_key = st.text_input(
+        _label,
+        value=os.environ.get(_env_var, ""),
+        type="password",
+        placeholder=f"환경변수 {_env_var} 또는 직접 입력",
+        key=f"api_key_{_prov}",
+    )
+
+    st.markdown('<hr class="section">', unsafe_allow_html=True)
+
+    # ── 3. 문서 업로드 ──────────────────────────────────────────────────────────
     st.subheader("📁 문서 업로드")
     uploaded_file = st.file_uploader(
         "PDF 또는 TXT 파일을 업로드하세요",
@@ -174,10 +197,14 @@ with tab_quiz:
             )
 
         if gen_btn:
+            if not api_key:
+                st.error("API Key를 입력해주세요.")
+                st.stop()
             with st.spinner("퀴즈 생성 중..."):
                 questions = generate_quiz(
                     doc_text=st.session_state.doc_text,
                     model_id=selected_model_id,
+                    api_key=api_key,
                 )
             st.session_state.quiz_questions = questions
             st.session_state.quiz_answers = {}
@@ -257,12 +284,16 @@ user_input = st.chat_input(
 )
 
 if user_input and st.session_state.doc_text:
+    if not api_key:
+        st.error("API Key를 사이드바에서 입력해주세요.")
+        st.stop()
     st.session_state.messages.append({"role": "user", "content": user_input})
     with st.spinner("답변 생성 중..."):
         answer = get_rag_answer(
             query=user_input,
             doc_text=st.session_state.doc_text,
             model_id=selected_model_id,
+            api_key=api_key,
             chat_history=st.session_state.messages[:-1],
             vector_store=st.session_state.vector_store,
         )
