@@ -75,3 +75,4 @@ logs/
 
 # claude
 .claude
+.claudeignore
