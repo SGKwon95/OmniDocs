@@ -1,0 +1,88 @@
+/* ── 채팅 말풍선 ─────────────────────────────────────────────────────────── */
+.chat-user {
+  background: #e8f4fd;
+  border-radius: 12px 12px 2px 12px;
+  padding: 0.7rem 1rem;
+  margin: 0.4rem 0 0.4rem auto;
+  text-align: right;
+  color: #1a1a2e;
+  width: max-content;
+  max-width: 80%;
+}
+.chat-assistant {
+  background: #f0f2f6;
+  border-radius: 12px 12px 12px 2px;
+  padding: 0.7rem 1rem;
+  margin: 0.4rem 0;
+  color: #1a1a2e;
+}
+
+/* ── 피드백 버튼 영역 ────────────────────────────────────────────────────── */
+.feedback-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.3rem;
+  margin-left: 0.5rem;
+}
+
+/* ── 퀴즈 카드 ───────────────────────────────────────────────────────────── */
+.quiz-card {
+  background: #ffffff;
+  border: 1px solid #dde3ec;
+  border-radius: 10px;
+  padding: 1.2rem 1.4rem;
+  margin-bottom: 1.2rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+/* ── 섹션 구분선 ─────────────────────────────────────────────────────────── */
+hr.section {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin: 1.2rem 0;
+}
+
+/* ── UI 요소 숨기기 ──────────────────────────────────────────────────────── */
+[data-testid="stAppDeployButton"] {
+  display: none !important;
+}
+[data-testid="stHeader"] {
+  display: none !important;
+}
+#MainMenu {
+  display: none !important;
+}
+
+/* ── 사이드바: 독립 스크롤 ───────────────────────────────────────────────── */
+[data-testid="stSidebar"] > div:first-child {
+  overflow-y: auto !important;
+  height: 100vh !important;
+}
+
+/* ── 메인 블록 padding ───────────────────────────────────────────────────── */
+[data-testid="stMainBlockContainer"] {
+  padding: 1rem 2rem !important;
+  background: transparent !important;
+  overflow-y: hidden;
+}
+
+[data-testid="stBottom"] {
+  background: transparent !important;
+}
+
+[data-testid="stChatInput"] {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+[data-testid="stChatInput"] > div {
+  border-radius: 999px !important;
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.15) !important;
+  border: 1px solid #d0d8e8 !important;
+  overflow: hidden;
+}
+
+[data-testid="stChatInput"] > div:focus-within {
+  box-shadow: 0 6px 32px rgba(79, 122, 255, 0.22) !important;
+  border-color: #4f7aff !important;
+}
