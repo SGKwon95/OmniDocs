@@ -1,5 +1,6 @@
 import os
 import streamlit as st
+import streamlit.components.v1 as components
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -40,6 +41,7 @@ for k, v in defaults.items():
 # SIDEBAR
 # ══════════════════════════════════════════════════════════════════════════════
 with st.sidebar:
+    st.header("📄 OmniDocs")
     # ── 1. 모델 선택 ────────────────────────────────────────────────────────────
     st.subheader("🤖 모델 선택")
 
@@ -62,20 +64,33 @@ with st.sidebar:
 
     # ── 3. 문서 업로드 ──────────────────────────────────────────────────────────
     st.subheader("📁 문서 업로드")
-    uploaded_file = st.file_uploader(
-        "PDF 또는 TXT 파일을 업로드하세요",
-        type=["pdf", "txt"],
-        key="file_uploader",
-        help="최대 200 MB · PDF / TXT 형식 지원",
-    )
 
-    if uploaded_file:
-        if st.session_state.doc_name != uploaded_file.name:
+    if st.session_state.doc_name:
+        # 파일이 로드된 상태: 업로더 숨기고 파일명 + X 버튼 표시
+        col_name, col_x = st.columns([9, 1])
+        with col_name:
+            st.info(f"📄 **{st.session_state.doc_name}**")
+        with col_x:
+            if st.button("✕", key="clear_file"):
+                for k, v in defaults.items():
+                    st.session_state[k] = v
+                st.rerun()
+        chars = len(st.session_state.doc_text or "")
+        chunk_count = get_chunk_count(st.session_state.vector_store) if st.session_state.vector_store else 0
+        st.caption(f"추출 문자 수: {chars:,}자 · 청크 수: {chunk_count}개")
+    else:
+        # 파일 없음: 업로더 표시
+        uploaded_file = st.file_uploader(
+            "PDF 또는 TXT 파일을 업로드하세요",
+            type=["pdf", "txt"],
+            key="file_uploader",
+            help="최대 200 MB · PDF / TXT 형식 지원",
+        )
+        if uploaded_file:
             with st.spinner("텍스트 추출 중..."):
                 text = extract_text_from_file(uploaded_file)
                 st.session_state.doc_text = text
                 st.session_state.doc_name = uploaded_file.name
-                # 새 문서 → 대화·퀴즈 초기화
                 st.session_state.messages = []
                 st.session_state.feedback = {}
                 st.session_state.quiz_questions = []
@@ -86,12 +101,7 @@ with st.sidebar:
                 st.session_state.vector_store = build_vector_store(
                     text, source_name=uploaded_file.name
                 )
-            chunk_count = get_chunk_count(st.session_state.vector_store)
-            st.success(f"✅ **{uploaded_file.name}** 로드 완료")
-            chars = len(st.session_state.doc_text or "")
-            st.caption(f"추출 문자 수: {chars:,}자 · 청크 수: {chunk_count}개")
-    elif st.session_state.doc_name:
-        st.info(f"현재 문서: **{st.session_state.doc_name}**")
+            st.rerun()
 
     st.markdown('<hr class="section">', unsafe_allow_html=True)
 
@@ -105,7 +115,6 @@ with st.sidebar:
 # ══════════════════════════════════════════════════════════════════════════════
 # MAIN AREA
 # ══════════════════════════════════════════════════════════════════════════════
-st.title("📄 OmniDocs")
 
 # ── 채팅 입력을 탭보다 먼저 처리 → 사용자 메시지를 즉시 session_state에 저장 ──
 user_input = st.chat_input(
@@ -129,7 +138,7 @@ tab_chat, tab_quiz = st.tabs(["💬 Chat", "📝 Quiz"])
 with tab_chat:
     if st.session_state.doc_text:
         # ── 스크롤 가능한 대화 영역 ──────────────────────────────────────────────
-        with st.container(height=480, border=False):
+        with st.container(height=480, border=False, key="chat_container"):
             for idx, msg in enumerate(st.session_state.messages):
                 if msg["role"] == "user":
                     st.markdown(
@@ -174,6 +183,17 @@ with tab_chat:
                 )
                 st.session_state.messages.append({"role": "assistant", "content": answer})
                 st.rerun()
+
+            # ── 답변 완료 후 채팅 컨테이너 최하단 자동 스크롤 ────────────────────
+            components.html(
+                """
+                <script>
+                    const container = window.parent.document.querySelector('[data-testid="stVerticalBlockBorderWrapper"]');
+                    if (container) container.scrollTop = container.scrollHeight;
+                </script>
+                """,
+                height=0,
+            )
 
 
 # ══════════════════════════════════════════════════════════════════════════════
