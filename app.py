@@ -2,6 +2,7 @@ import os
 import streamlit as st
 import streamlit.components.v1 as components
 from dotenv import load_dotenv
+from PIL import Image
 
 load_dotenv()
 from pathlib import Path
@@ -38,10 +39,19 @@ for k, v in defaults.items():
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+# LOGO
+# ══════════════════════════════════════════════════════════════════════════════
+st.logo(
+    "logo.png",
+    icon_image="logo.png" # (선택 사항) 사이드바가 접혔을 때 보여줄 작은 아이콘
+)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # SIDEBAR
 # ══════════════════════════════════════════════════════════════════════════════
 with st.sidebar:
-    st.header("📄 OmniDocs")
+    
     # ── 1. 모델 선택 ────────────────────────────────────────────────────────────
     st.subheader("🤖 모델 선택")
 
@@ -104,13 +114,6 @@ with st.sidebar:
             st.rerun()
 
     st.markdown('<hr class="section">', unsafe_allow_html=True)
-
-    # ── 3. 초기화 버튼 ─────────────────────────────────────────────────────────
-    if st.button("🗑️ 초기화 (문서·대화·퀴즈)", use_container_width=True):
-        for k, v in defaults.items():
-            st.session_state[k] = v
-        st.rerun()
-
 
 # ══════════════════════════════════════════════════════════════════════════════
 # MAIN AREA
