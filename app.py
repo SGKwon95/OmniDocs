@@ -116,29 +116,70 @@ with st.sidebar:
 # MAIN AREA
 # ══════════════════════════════════════════════════════════════════════════════
 
-# ── 채팅 입력을 탭보다 먼저 처리 → 사용자 메시지를 즉시 session_state에 저장 ──
-user_input = st.chat_input(
-    "👈 사이드바에서 PDF 또는 TXT 문서를 먼저 업로드해주세요." if not st.session_state.doc_text else
-    "문서에 대해 무엇이든 물어보세요...",
-    disabled=not st.session_state.doc_text,
+col_chat, col_quiz = st.columns(2, gap="medium")
+
+# st.columns에 .card 클래스 주입 + 채팅 입력란을 왼쪽 카드 하단에 고정
+components.html(
+    """
+    <script>
+        function applyLayout() {
+            const doc = window.parent.document;
+            const block = doc.querySelector('[data-testid="stHorizontalBlock"]');
+            if (!block) { setTimeout(applyLayout, 50); return; }
+
+            // 두 컬럼에 .card 클래스 추가
+            const cols = block.querySelectorAll(':scope > [data-testid="stColumn"]');
+            cols.forEach(col => col.classList.add('card'));
+
+            // 채팅 입력란을 왼쪽 카드 하단에 고정
+            const stBottom = doc.querySelector('[data-testid="stBottom"]');
+            const leftCard = cols[0];
+            if (!stBottom || !leftCard) return;
+
+            function updateChatInputPos() {
+                const rect = leftCard.getBoundingClientRect();
+                stBottom.style.cssText = `
+                    position: fixed !important;
+                    left: ${rect.left + 20}px !important;
+                    width: ${rect.width - 40}px !important;
+                    bottom: 1rem !important;
+                    background: transparent !important;
+                    padding: 0 !important;
+                    z-index: 999;
+                `;
+            }
+
+            updateChatInputPos();
+            window.parent.addEventListener('resize', updateChatInputPos);
+        }
+        applyLayout();
+    </script>
+    """,
+    height=0,
 )
 
-if user_input and st.session_state.doc_text:
-    if not api_key:
-        st.error("API Key를 입력해주세요.")
-        st.stop()
-    st.session_state.messages.append({"role": "user", "content": user_input})
-
-tab_chat, tab_quiz = st.tabs(["💬 Chat", "📝 Quiz"])
-
 
 # ══════════════════════════════════════════════════════════════════════════════
-# TAB 1 — CHAT
+# 왼쪽 패널 — CHAT
 # ══════════════════════════════════════════════════════════════════════════════
-with tab_chat:
+with col_chat:
+    st.markdown('<p class="panel-title">💬 Chat</p>', unsafe_allow_html=True)
+
+    user_input = st.chat_input(
+        "👈 문서를 먼저 업로드해주세요." if not st.session_state.doc_text else
+        "문서에 대해 무엇이든 물어보세요...",
+        disabled=not st.session_state.doc_text,
+        key="chat_input",
+    )
+
+    if user_input and st.session_state.doc_text:
+        if not api_key:
+            st.error("API Key를 입력해주세요.")
+            st.stop()
+        st.session_state.messages.append({"role": "user", "content": user_input})
+
     if st.session_state.doc_text:
-        # ── 스크롤 가능한 대화 영역 ──────────────────────────────────────────────
-        with st.container(height=480, border=False, key="chat_container"):
+        with st.container(height=460, border=False, key="chat_container"):
             for idx, msg in enumerate(st.session_state.messages):
                 if msg["role"] == "user":
                     st.markdown(
@@ -151,7 +192,6 @@ with tab_chat:
                         unsafe_allow_html=True,
                     )
 
-                    # 피드백 버튼 (assistant 메시지에만)
                     current_fb = st.session_state.feedback.get(idx)
                     col_like, col_dislike, col_spacer = st.columns([1, 1, 10])
                     with col_like:
@@ -169,7 +209,6 @@ with tab_chat:
                             )
                             st.rerun()
 
-            # ── 마지막 메시지가 user면 스트리밍 응답 시작 ──────────────────────
             if st.session_state.messages and st.session_state.messages[-1]["role"] == "user":
                 answer = st.write_stream(
                     stream_rag_answer(
@@ -184,7 +223,6 @@ with tab_chat:
                 st.session_state.messages.append({"role": "assistant", "content": answer})
                 st.rerun()
 
-            # ── 답변 완료 후 채팅 컨테이너 최하단 자동 스크롤 ────────────────────
             components.html(
                 """
                 <script>
@@ -194,16 +232,17 @@ with tab_chat:
                 """,
                 height=0,
             )
+    else:
+        st.markdown('<p class="panel-empty">👈 사이드바에서 문서를 먼저 업로드해주세요.</p>', unsafe_allow_html=True)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# TAB 2 — QUIZ
+# 오른쪽 패널 — QUIZ
 # ══════════════════════════════════════════════════════════════════════════════
-with tab_quiz:
+with col_quiz:
+    st.markdown('<p class="panel-title">📝 Quiz</p>', unsafe_allow_html=True)
+
     if st.session_state.doc_text:
-        st.subheader("📝 문서 기반 퀴즈")
-        st.caption("업로드된 문서 내용을 바탕으로 객관식 3문제를 자동 생성합니다.")
-
         col_gen, _ = st.columns([2, 5])
         with col_gen:
             gen_btn = st.button(
@@ -227,7 +266,6 @@ with tab_quiz:
             st.session_state.quiz_submitted = False
             st.rerun()
 
-        # ── 스크롤 가능한 퀴즈 영역 ──────────────────────────────────────────────
         with st.container(height=500, border=False):
             if st.session_state.quiz_questions:
                 with st.form(key="quiz_form"):
@@ -238,7 +276,7 @@ with tab_quiz:
                             f'</div>',
                             unsafe_allow_html=True,
                         )
-                        choice = st.radio(
+                        st.radio(
                             f"Q{q_idx + 1} 선택",
                             options=q["options"],
                             key=f"quiz_radio_{q_idx}",
@@ -253,14 +291,12 @@ with tab_quiz:
 
                 if submit_quiz:
                     for q_idx in range(len(st.session_state.quiz_questions)):
-                        radio_key = f"quiz_radio_{q_idx}"
                         st.session_state.quiz_answers[q_idx] = st.session_state.get(
-                            radio_key
+                            f"quiz_radio_{q_idx}"
                         )
                     st.session_state.quiz_submitted = True
                     st.rerun()
 
-                # 채점 결과 표시
                 if st.session_state.quiz_submitted:
                     st.markdown("---")
                     st.subheader("🏆 채점 결과")
@@ -288,5 +324,7 @@ with tab_quiz:
                         st.session_state.quiz_answers = {}
                         st.session_state.quiz_submitted = False
                         st.rerun()
+    else:
+        st.markdown('<p class="panel-empty">👈 사이드바에서 문서를 먼저 업로드해주세요.</p>', unsafe_allow_html=True)
 
 
