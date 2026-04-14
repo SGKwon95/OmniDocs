@@ -1,5 +1,8 @@
 import os
 import streamlit as st
+from dotenv import load_dotenv
+
+load_dotenv()
 from pathlib import Path
 from utils import extract_text_from_file
 from llm_logic import get_rag_answer, generate_quiz, detect_provider
@@ -40,55 +43,20 @@ with st.sidebar:
     # ── 1. 모델 선택 ────────────────────────────────────────────────────────────
     st.subheader("🤖 모델 선택")
 
-    PROVIDER_MODELS = {
-        "💰 유료 모델": {
-            "Claude 3.5 Sonnet": "claude-sonnet-4-5",
-            "Claude 3 Haiku": "claude-haiku-4-5-20251001",
-            "GPT-4o": "gpt-4o",
-            "GPT-4o Mini": "gpt-4o-mini",
-        },
-        "🆓 무료 모델": {
-            "Gemini 1.5 Pro": "gemini-1.5-pro",
-            "Gemini 1.5 Flash": "gemini-1.5-flash",
-            "Groq Llama 3 (70B)": "llama3-70b-8192",
-            "Groq Mixtral": "mixtral-8x7b-32768",
-        },
+    MODELS = {
+        "Claude 3.5 Sonnet (유료)":  ("claude-sonnet-4-5",          os.getenv("ANTHROPIC_API_KEY")),
+        "Claude 3 Haiku (유료)":     ("claude-haiku-4-5-20251001",   os.getenv("ANTHROPIC_API_KEY")),
+        "GPT-4o (유료)":             ("gpt-4o",                      os.getenv("OPENAI_API_KEY")),
+        "GPT-4o Mini (유료)":        ("gpt-4o-mini",                 os.getenv("OPENAI_API_KEY")),
+        "Gemini 1.5 Pro (무료)":     ("gemini-1.5-pro",              os.getenv("GOOGLE_API_KEY")),
+        "Gemini 1.5 Flash (무료)":   ("gemini-1.5-flash",            os.getenv("GOOGLE_API_KEY")),
+        "Groq Llama 3 70B (무료)":   ("llama3-70b-8192",             os.getenv("GROQ_API_KEY")),
+        "Groq Mixtral (무료)":       ("mixtral-8x7b-32768",          os.getenv("GROQ_API_KEY")),
     }
 
-    provider_group = st.selectbox(
-        "모델 그룹",
-        list(PROVIDER_MODELS.keys()),
-        key="provider_group",
-    )
-    model_display = st.selectbox(
-        "모델",
-        list(PROVIDER_MODELS[provider_group].keys()),
-        key="model_display",
-    )
-    selected_model_id = PROVIDER_MODELS[provider_group][model_display]
+    model_display = st.selectbox("모델", list(MODELS.keys()), key="model_display")
+    selected_model_id, api_key = MODELS[model_display]
     st.caption(f"Model ID: `{selected_model_id}`")
-
-    st.markdown('<hr class="section">', unsafe_allow_html=True)
-
-    # ── 2. API Key ──────────────────────────────────────────────────────────────
-    st.subheader("🔑 API Key")
-
-    _PROVIDER_META = {
-        "anthropic": ("Anthropic API Key", "ANTHROPIC_API_KEY"),
-        "openai":    ("OpenAI API Key",    "OPENAI_API_KEY"),
-        "google":    ("Google API Key",    "GOOGLE_API_KEY"),
-        "groq":      ("Groq API Key",      "GROQ_API_KEY"),
-    }
-    _prov = detect_provider(selected_model_id)
-    _label, _env_var = _PROVIDER_META[_prov]
-
-    api_key = st.text_input(
-        _label,
-        value=os.environ.get(_env_var, ""),
-        type="password",
-        placeholder=f"환경변수 {_env_var} 또는 직접 입력",
-        key=f"api_key_{_prov}",
-    )
 
     st.markdown('<hr class="section">', unsafe_allow_html=True)
 
@@ -285,7 +253,7 @@ user_input = st.chat_input(
 
 if user_input and st.session_state.doc_text:
     if not api_key:
-        st.error("API Key를 사이드바에서 입력해주세요.")
+        st.error("API Key를 입력해주세요.")
         st.stop()
     st.session_state.messages.append({"role": "user", "content": user_input})
     with st.spinner("답변 생성 중..."):
