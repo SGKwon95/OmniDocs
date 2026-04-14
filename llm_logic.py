@@ -86,6 +86,71 @@ def _call_llm(
     raise ValueError(f"알 수 없는 모델: {model_id}")
 
 
+# ── 스트리밍 LLM 호출 ─────────────────────────────────────────────────────────
+def _stream_llm(
+    system: str,
+    messages: list[dict],
+    model_id: str,
+    api_key: str,
+    max_tokens: int = 1024,
+):
+    """각 프로바이더의 스트리밍 API를 사용해 텍스트 청크를 yield합니다."""
+    provider = detect_provider(model_id)
+
+    if provider == "anthropic":
+        import anthropic
+        client = anthropic.Anthropic(api_key=api_key)
+        with client.messages.stream(
+            model=model_id,
+            max_tokens=max_tokens,
+            system=system,
+            messages=messages,
+        ) as stream:
+            for text in stream.text_stream:
+                yield text
+
+    elif provider in ("openai", "groq"):
+        from openai import OpenAI
+        client = OpenAI(
+            api_key=api_key,
+            base_url="https://api.groq.com/openai/v1" if provider == "groq" else None,
+        )
+        full_msgs = [{"role": "system", "content": system}] + messages
+        stream = client.chat.completions.create(
+            model=model_id,
+            messages=full_msgs,
+            max_tokens=max_tokens,
+            stream=True,
+        )
+        for chunk in stream:
+            delta = chunk.choices[0].delta.content
+            if delta:
+                yield delta
+
+    elif provider == "google":
+        import google.generativeai as genai
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel(
+            model_name=model_id,
+            system_instruction=system,
+        )
+        history = [
+            {
+                "role": "user" if m["role"] == "user" else "model",
+                "parts": [m["content"]],
+            }
+            for m in messages[:-1]
+        ]
+        chat = model.start_chat(history=history)
+        resp = chat.send_message(messages[-1]["content"], stream=True)
+        for chunk in resp:
+            if chunk.text:
+                yield chunk.text
+
+    else:
+        raise ValueError(f"알 수 없는 모델: {model_id}")
+
+
 # ── RAG 답변 ──────────────────────────────────────────────────────────────────
 def get_rag_answer(
     query: str,
@@ -114,6 +179,36 @@ def get_rag_answer(
     messages.append({"role": "user", "content": query})
 
     return _call_llm(system, messages, model_id, api_key)
+
+
+def stream_rag_answer(
+    query: str,
+    doc_text: str,
+    model_id: str,
+    api_key: str,
+    chat_history: list[dict] | None = None,
+    vector_store=None,
+):
+    """스트리밍 방식으로 RAG 답변을 yield합니다."""
+    if vector_store is not None:
+        from vectorstore import search_documents
+        chunks = search_documents(vector_store, query, k=4)
+        context = "\n\n---\n\n".join(chunks)
+    else:
+        context = (doc_text or "")[:3000]
+
+    system = (
+        "You are a helpful document assistant. "
+        "Answer the user's question using only the document context below. "
+        "If the answer is not in the context, say so clearly. "
+        "Respond in the same language as the user's question.\n\n"
+        f"[Document Context]\n{context}"
+    )
+
+    messages = list(chat_history or [])
+    messages.append({"role": "user", "content": query})
+
+    yield from _stream_llm(system, messages, model_id, api_key)
 
 
 # ── 퀴즈 생성 ─────────────────────────────────────────────────────────────────

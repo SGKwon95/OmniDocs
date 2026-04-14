@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 from pathlib import Path
 from utils import extract_text_from_file
-from llm_logic import get_rag_answer, generate_quiz, detect_provider
+from llm_logic import get_rag_answer, stream_rag_answer, generate_quiz, detect_provider
 from vectorstore import build_vector_store, get_chunk_count
 
 # ── 페이지 기본 설정 ────────────────────────────────────────────────────────────
@@ -107,6 +107,19 @@ with st.sidebar:
 # ══════════════════════════════════════════════════════════════════════════════
 st.title("📄 OmniDocs")
 
+# ── 채팅 입력을 탭보다 먼저 처리 → 사용자 메시지를 즉시 session_state에 저장 ──
+user_input = st.chat_input(
+    "👈 사이드바에서 PDF 또는 TXT 문서를 먼저 업로드해주세요." if not st.session_state.doc_text else
+    "문서에 대해 무엇이든 물어보세요...",
+    disabled=not st.session_state.doc_text,
+)
+
+if user_input and st.session_state.doc_text:
+    if not api_key:
+        st.error("API Key를 입력해주세요.")
+        st.stop()
+    st.session_state.messages.append({"role": "user", "content": user_input})
+
 tab_chat, tab_quiz = st.tabs(["💬 Chat", "📝 Quiz"])
 
 
@@ -146,6 +159,21 @@ with tab_chat:
                                 None if current_fb == "dislike" else "dislike"
                             )
                             st.rerun()
+
+            # ── 마지막 메시지가 user면 스트리밍 응답 시작 ──────────────────────
+            if st.session_state.messages and st.session_state.messages[-1]["role"] == "user":
+                answer = st.write_stream(
+                    stream_rag_answer(
+                        query=st.session_state.messages[-1]["content"],
+                        doc_text=st.session_state.doc_text,
+                        model_id=selected_model_id,
+                        api_key=api_key,
+                        chat_history=st.session_state.messages[:-1],
+                        vector_store=st.session_state.vector_store,
+                    )
+                )
+                st.session_state.messages.append({"role": "assistant", "content": answer})
+                st.rerun()
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -242,28 +270,3 @@ with tab_quiz:
                         st.rerun()
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# CHAT INPUT — body 최하단 고정 (st.chat_input은 항상 페이지 하단에 고정됨)
-# ══════════════════════════════════════════════════════════════════════════════
-user_input = st.chat_input(
-    "👈 사이드바에서 PDF 또는 TXT 문서를 먼저 업로드해주세요." if not st.session_state.doc_text else
-    "문서에 대해 무엇이든 물어보세요...",
-    disabled=not st.session_state.doc_text,
-)
-
-if user_input and st.session_state.doc_text:
-    if not api_key:
-        st.error("API Key를 입력해주세요.")
-        st.stop()
-    st.session_state.messages.append({"role": "user", "content": user_input})
-    with st.spinner("답변 생성 중..."):
-        answer = get_rag_answer(
-            query=user_input,
-            doc_text=st.session_state.doc_text,
-            model_id=selected_model_id,
-            api_key=api_key,
-            chat_history=st.session_state.messages[:-1],
-            vector_store=st.session_state.vector_store,
-        )
-    st.session_state.messages.append({"role": "assistant", "content": answer})
-    st.rerun()
