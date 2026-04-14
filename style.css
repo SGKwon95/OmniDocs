@@ -13,7 +13,7 @@
   background: #f0f2f6;
   border-radius: 12px 12px 12px 2px;
   padding: 0.7rem 1rem;
-  margin: 0.4rem 0;
+  margin: 0.4rem 0 4rem 0;
   color: #1a1a2e;
 }
 
@@ -54,6 +54,9 @@ hr.section {
 }
 
 /* ── 사이드바: 독립 스크롤 ───────────────────────────────────────────────── */
+[data-testid="stSidebar"] {
+  top: 0 !important;
+}
 [data-testid="stSidebar"] > div:first-child {
   overflow-y: auto !important;
   height: 100vh !important;
