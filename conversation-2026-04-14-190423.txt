@@ -1,0 +1,2390 @@
+╭─── Claude Code v2.1.104 ─────────────────────────────────────────────────────╮
+│                                                    │ Tips for getting        │
+│                Welcome back 사용자!                │ started                 │
+│                                                    │ Run /init to create a … │
+│                       ▐▛███▜▌                      │ ─────────────────────── │
+│                      ▝▜█████▛▘                     │ Recent activity         │
+│                        ▘▘ ▝▝                       │ No recent activity      │
+│   Sonnet 4.6 · Claude Pro · sgkwon95@gmail.com's   │                         │
+│   Organization                                     │                         │
+│                     ~\OmniDocs                     │                         │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+❯ 서버 실행 명령어                                                              
+
+  Recalled 1 memory (ctrl+o to expand)
+
+● Streamlit 앱 실행 명령어:
+
+  streamlit run app.py
+
+  프로젝트 디렉토리(C:/Users/ssund/OmniDocs/)에서 실행하면 됩니다.
+
+❯ 모델 api키 입력 방법                                                          
+
+  Searched for 1 pattern, read 1 file (ctrl+o to expand)
+
+● 두 가지 방법이 있습니다:
+
+  ---
+  방법 1: 앱 사이드바에서 직접 입력 (간편)
+
+  앱 실행 후 왼쪽 사이드바 "🔑 API Key" 섹션에 입력하면 됩니다.
+  선택한 모델에 따라 자동으로 해당 프로바이더 키 입력란이 표시됩니다.
+
+  ┌──────────────────────┬───────────────────┐
+  │         모델         │     필요한 키     │
+  ├──────────────────────┼───────────────────┤
+  │ Claude (Anthropic)   │ Anthropic API Key │
+  ├──────────────────────┼───────────────────┤
+  │ GPT-4o (OpenAI)      │ OpenAI API Key    │
+  ├──────────────────────┼───────────────────┤
+  │ Gemini (Google)      │ Google API Key    │
+  ├──────────────────────┼───────────────────┤
+  │ Groq Llama / Mixtral │ Groq API Key      │
+  └──────────────────────┴───────────────────┘
+
+  ---
+  방법 2: 환경변수로 설정 (자동 로드)
+
+  터미널에서 미리 설정하면 앱 실행 시 자동으로 입력됩니다:
+
+  # Windows (PowerShell)
+  $env:ANTHROPIC_API_KEY="sk-ant-..."
+  $env:OPENAI_API_KEY="sk-..."
+  $env:GOOGLE_API_KEY="AIza..."
+  $env:GROQ_API_KEY="gsk_..."
+
+  streamlit run app.py
+
+  또는 .env 파일을 프로젝트 루트에 만들어 사용할 수도 있습니다 (별도 라이브러리
+  추가 필요).
+
+  ---
+  권장: 개발 중에는 사이드바 입력, 배포 시에는 환경변수 사용을 추천합니다.
+
+❯ .env파일 만들었는데 이걸 api키 불러올 수 있게 코드 변경해줘                   
+
+  Searched for 1 pattern, read 1 file (ctrl+o to expand)
+
+● requirements.txt에 python-dotenv 추가하고, app.py에 로드 코드를 넣겠습니다.
+
+● Update(requirements.txt)
+  ⎿  Added 1 line
+      1  streamlit>=1.35.0
+      2 +python-dotenv>=1.0.0                                            
+      3  pypdf>=4.0.0
+      4  pdfplumber>=0.10.0
+      5  
+
+● Update(app.py)
+  ⎿  Added 3 lines
+      1  import os
+      2  import streamlit as st
+      3 +from dotenv import load_dotenv                                  
+      4 +                                                                
+      5 +load_dotenv()                                                   
+      6  from pathlib import Path
+      7  from utils import extract_text_from_file
+      8  from llm_logic import get_rag_answer, generate_quiz, detect_prov
+         ider
+
+● 이제 python-dotenv 패키지를 설치해야 합니다:
+
+  pip install python-dotenv
+
+  ---
+  .env 파일은 아래 형식으로 작성하면 됩니다:
+
+  ANTHROPIC_API_KEY=sk-ant-...
+  OPENAI_API_KEY=sk-...
+  GOOGLE_API_KEY=AIza...
+  GROQ_API_KEY=gsk_...
+
+  앱 실행 시 .env에서 자동으로 키를 불러와 사이드바 입력란에 채워집니다.
+
+❯ 서버 실행                                                                     
+
+● Bash(streamlit run app.py)
+  ⎿  Running in the background (↓ to manage)
+
+● Bash(sleep 3 && cat C:\Users\ssund\AppData\Local\Temp\claude\C--Users-ssund-Om
+      niDocs\e60076cb-9a7a-455f-be22-8e304c3adea5\tasks\bf9mi5j51.output)
+  ⎿  Error: Blocked: sleep 3 followed by: cat 
+     C:\Users\ssund\AppData\Local\Temp\claude\C--Users-ssund-OmniDocs\e60076cb-9
+     a7a-455f-be22-8e304c3adea5\tasks\bf9mi5j51.output. Run blocking commands in
+      the background with run_in_background: true — you'll get a completion 
+     notification when done. For streaming events (watching logs, polling APIs),
+      use the Monitor tool. If you genuinely need a delay (rate limiting, 
+     deliberate pacing), keep it under 2 seconds.
+
+● Background command "Run Streamlit server" failed with exit code 127
+
+  Read 1 file (ctrl+o to expand)
+
+● Streamlit이 이메일 입력 프롬프트에서 멈춘 것 같습니다. 플래그를 추가해서 다시
+  실행합니다.
+
+● Bash(streamlit run app.py --browser.gatherUsageStats false)
+  ⎿  Running in the background (↓ to manage)
+
+  Read 1 file (ctrl+o to expand)
+
+● Background command "Run Streamlit server skipping usage stats prompt" failed
+with exit code 127
+
+● 이메일 입력 프롬프트가 계속 막고 있습니다. Streamlit 설정 파일을 만들어
+  해결합니다.
+
+● Bash(mkdir -p /c/Users/ssund/OmniDocs/.streamlit)
+  ⎿  Done
+
+● Write(.streamlit\config.toml)
+  ⎿  Wrote 2 lines to .streamlit\config.toml
+      1 [browser]
+      2 gatherUsageStats = false
+
+● Bash(streamlit run app.py)
+  ⎿  Running in the background (↓ to manage)
+  Read 1 file (ctrl+o to expand)
+
+● Background command "Run Streamlit server" failed with exit code 127
+
+● Bash(echo "" | streamlit run app.py)
+  ⎿  Running in the background (↓ to manage)
+
+  Read 1 file (ctrl+o to expand)
+
+● 서버가 시작되고 있습니다. 잠시 후 출력을 다시 확인합니다.
+
+  Read 1 file (ctrl+o to expand)
+
+● 서버가 정상적으로 실행됐습니다.
+
+  - Local URL: http://localhost:8501
+  - Network URL: http://192.168.204.23:8501
+
+  브라우저에서 http://localhost:8501 로 접속하면 됩니다.
+
+✻ Baked for 48s
+
+❯ 모델 그룹이라는거 없애주고 모델명에 (유료),(무료)이런식으로 표시해줘          
+
+  Read 1 file (ctrl+o to expand)
+
+● Update(app.py)
+  ⎿  Added 11 lines, removed 40 lines
+      43      # ── 1. 모델 선택 ─────────────────────────────────────────
+          ───────────────────
+      44      st.subheader("🤖 모델 선택")
+      45  
+      46 -    PROVIDER_MODELS = {                                        
+      47 -        "💰 유료 모델": {                                      
+      48 -            "Claude 3.5 Sonnet": "claude-sonnet-4-5",          
+      49 -            "Claude 3 Haiku": "claude-haiku-4-5-20251001",     
+      50 -            "GPT-4o": "gpt-4o",                                
+      51 -            "GPT-4o Mini": "gpt-4o-mini",                      
+      52 -        },                                                     
+      53 -        "🆓 무료 모델": {                                      
+      54 -            "Gemini 1.5 Pro": "gemini-1.5-pro",                
+      55 -            "Gemini 1.5 Flash": "gemini-1.5-flash",            
+      56 -            "Groq Llama 3 (70B)": "llama3-70b-8192",           
+      57 -            "Groq Mixtral": "mixtral-8x7b-32768",              
+      58 -        },                                                     
+      46 +    MODELS = {                                                 
+      47 +        "Claude 3.5 Sonnet (유료)":  ("claude-sonnet-4-5",     
+         +     os.getenv("ANTHROPIC_API_KEY")),                          
+      48 +        "Claude 3 Haiku (유료)":     ("claude-haiku-4-5-2025100
+         +1",   os.getenv("ANTHROPIC_API_KEY")),                         
+      49 +        "GPT-4o (유료)":             ("gpt-4o",                
+         +      os.getenv("OPENAI_API_KEY")),                            
+      50 +        "GPT-4o Mini (유료)":        ("gpt-4o-mini",           
+         +      os.getenv("OPENAI_API_KEY")),                            
+      51 +        "Gemini 1.5 Pro (무료)":     ("gemini-1.5-pro",        
+         +      os.getenv("GOOGLE_API_KEY")),                            
+      52 +        "Gemini 1.5 Flash (무료)":   ("gemini-1.5-flash",      
+         +      os.getenv("GOOGLE_API_KEY")),                            
+      53 +        "Groq Llama 3 70B (무료)":   ("llama3-70b-8192",       
+         +      os.getenv("GROQ_API_KEY")),                              
+      54 +        "Groq Mixtral (무료)":       ("mixtral-8x7b-32768",    
+         +      os.getenv("GROQ_API_KEY")),                              
+      55      }
+      56  
+      61 -    API_KEYS = {                                               
+      62 -        "💰 유료 모델": {                                      
+      63 -            "Claude 3.5 Sonnet": os.getenv("ANTHROPIC_API_KEY")
+         -,                                                              
+      64 -            "Claude 3 Haiku": os.getenv("ANTHROPIC_API_KEY"),  
+      65 -            "GPT-4o": os.getenv("OPENAI_API_KEY"),             
+      66 -            "GPT-4o Mini": os.getenv("OPENAI_API_KEY"),        
+      67 -        },                                                     
+      68 -        "🆓 무료 모델": {                                      
+      69 -            "Gemini 1.5 Pro": os.getenv("GOOGLE_API_KEY"),     
+      70 -            "Gemini 1.5 Flash": os.getenv("GOOGLE_API_KEY"),   
+      71 -            "Groq Llama 3 (70B)": os.getenv("GROQ_API_KEY"),   
+      72 -            "Groq Mixtral": os.getenv("GROQ_API_KEY"),         
+      73 -        },                                                     
+      74 -    }                                                          
+      75 -                                                               
+      76 -    provider_group = st.selectbox(                             
+      77 -        "모델 그룹",                                           
+      78 -        list(PROVIDER_MODELS.keys()),                          
+      79 -        key="provider_group",                                  
+      80 -    )                                                          
+      81 -    model_display = st.selectbox(                              
+      82 -        "모델",                                                
+      83 -        list(PROVIDER_MODELS[provider_group].keys()),          
+      84 -        key="model_display",                                   
+      85 -    )                                                          
+      86 -    selected_model_id = PROVIDER_MODELS[provider_group][model_d
+         -isplay]                                                        
+      87 -    api_key = API_KEYS[provider_group][model_display]          
+      57 +    model_display = st.selectbox("모델", list(MODELS.keys()), k
+         +ey="model_display")                                            
+      58 +    selected_model_id, api_key = MODELS[model_display]         
+      59      st.caption(f"Model ID: `{selected_model_id}`")
+      60  
+      61      st.markdown('<hr class="section">', unsafe_allow_html=True)
+
+● 모델 그룹 selectbox를 제거하고, 단일 selectbox에 (유료) / (무료) 표시를
+  추가했습니다.
+
+❯ 모델이 답변이 완료된 후에 답변 내용이 화면에 표시되는데 답변중에도 표시할 수  
+  있도록 바꿔줘                                                                 
+
+  Read 1 file (ctrl+o to expand)
+
+● llm_logic.py에 스트리밍 함수를 추가하고, app.py에서 st.write_stream()을
+  사용하도록 변경합니다.
+
+● Update(llm_logic.py)
+  ⎿  Added 95 lines
+       86      raise ValueError(f"알 수 없는 모델: {model_id}")
+       87  
+       88  
+       89 +# ── 스트리밍 LLM 호출 ───────────────────────────────────────
+          +──────────────────                                            
+       90 +def _stream_llm(                                              
+       91 +    system: str,                                              
+       92 +    messages: list[dict],                                     
+       93 +    model_id: str,                                            
+       94 +    api_key: str,                                             
+       95 +    max_tokens: int = 1024,                                   
+       96 +):                                                            
+       97 +    """각 프로바이더의 스트리밍 API를 사용해 텍스트 청크를 yie
+          +ld합니다."""                                                  
+       98 +    provider = detect_provider(model_id)                      
+       99 +                                                              
+      100 +    if provider == "anthropic":                               
+      101 +        import anthropic                                      
+      102 +        client = anthropic.Anthropic(api_key=api_key)         
+      103 +        with client.messages.stream(                          
+      104 +            model=model_id,                                   
+      105 +            max_tokens=max_tokens,                            
+      106 +            system=system,                                    
+      107 +            messages=messages,                                
+      108 +        ) as stream:                                          
+      109 +            for text in stream.text_stream:                   
+      110 +                yield text                                    
+      111 +                                                              
+      112 +    elif provider in ("openai", "groq"):                      
+      113 +        from openai import OpenAI                             
+      114 +        client = OpenAI(                                      
+      115 +            api_key=api_key,                                  
+      116 +            base_url="https://api.groq.com/openai/v1" if provi
+          +der == "groq" else None,                                      
+      117 +        )                                                     
+      118 +        full_msgs = [{"role": "system", "content": system}] + 
+          +messages                                                      
+      119 +        stream = client.chat.completions.create(              
+      120 +            model=model_id,                                   
+      121 +            messages=full_msgs,                               
+      122 +            max_tokens=max_tokens,                            
+      123 +            stream=True,                                      
+      124 +        )                                                     
+      125 +        for chunk in stream:                                  
+      126 +            delta = chunk.choices[0].delta.content            
+      127 +            if delta:                                         
+      128 +                yield delta                                   
+      129 +                                                              
+      130 +    elif provider == "google":                                
+      131 +        import google.generativeai as genai                   
+      132 +        genai.configure(api_key=api_key)                      
+      133 +        model = genai.GenerativeModel(                        
+      134 +            model_name=model_id,                              
+      135 +            system_instruction=system,                        
+      136 +        )                                                     
+      137 +        history = [                                           
+      138 +            {                                                 
+      139 +                "role": "user" if m["role"] == "user" else "mo
+          +del",                                                         
+      140 +                "parts": [m["content"]],                      
+      141 +            }                                                 
+      142 +            for m in messages[:-1]                            
+      143 +        ]                                                     
+      144 +        chat = model.start_chat(history=history)              
+      145 +        resp = chat.send_message(messages[-1]["content"], stre
+          +am=True)                                                      
+      146 +        for chunk in resp:                                    
+      147 +            if chunk.text:                                    
+      148 +                yield chunk.text                              
+      149 +                                                              
+      150 +    else:                                                     
+      151 +        raise ValueError(f"알 수 없는 모델: {model_id}")      
+      152 +                                                              
+      153 +                                                              
+      154  # ── RAG 답변 ────────────────────────────────────────────────
+           ──────────────────
+      155  def get_rag_answer(
+      156      query: str,
+     ...
+      181      return _call_llm(system, messages, model_id, api_key)
+      182  
+      183  
+      184 +def stream_rag_answer(                                        
+      185 +    query: str,                                               
+      186 +    doc_text: str,                                            
+      187 +    model_id: str,                                            
+      188 +    api_key: str,                                             
+      189 +    chat_history: list[dict] | None = None,                   
+      190 +    vector_store=None,                                        
+      191 +):                                                            
+      192 +    """스트리밍 방식으로 RAG 답변을 yield합니다."""           
+      193 +    if vector_store is not None:                              
+      194 +        from vectorstore import search_documents              
+      195 +        chunks = search_documents(vector_store, query, k=4)   
+      196 +        context = "\n\n---\n\n".join(chunks)                  
+      197 +    else:                                                     
+      198 +        context = (doc_text or "")[:3000]                     
+      199 +                                                              
+      200 +    system = (                                                
+      201 +        "You are a helpful document assistant. "              
+      202 +        "Answer the user's question using only the document co
+          +ntext below. "                                                
+      203 +        "If the answer is not in the context, say so clearly. 
+          +"                                                             
+      204 +        "Respond in the same language as the user's question.\
+          +n\n"                                                          
+      205 +        f"[Document Context]\n{context}"                      
+      206 +    )                                                         
+      207 +                                                              
+      208 +    messages = list(chat_history or [])                       
+      209 +    messages.append({"role": "user", "content": query})       
+      210 +                                                              
+      211 +    yield from _stream_llm(system, messages, model_id, api_key
+          +)                                                             
+      212 +                                                              
+      213 +                                                              
+      214  # ── 퀴즈 생성 ───────────────────────────────────────────────
+           ──────────────────
+      215  def generate_quiz(
+      216      doc_text: str,
+
+● 이제 app.py에서 import와 채팅 처리 부분을 수정합니다.
+
+● Update(app.py)
+  ⎿  Added 1 line, removed 1 line
+       5  load_dotenv()
+       6  from pathlib import Path
+       7  from utils import extract_text_from_file
+       8 -from llm_logic import get_rag_answer, generate_quiz, detect_pro
+         -vider                                                          
+       8 +from llm_logic import get_rag_answer, stream_rag_answer, genera
+         +te_quiz, detect_provider                                       
+       9  from vectorstore import build_vector_store, get_chunk_count
+      10  
+      11  # ── 페이지 기본 설정 ─────────────────────────────────────────
+          ───────────────────
+
+  Read 1 file (ctrl+o to expand)
+
+● Update(app.py)
+  ⎿  Added 10 lines, removed 8 lines
+      256          st.error("API Key를 입력해주세요.")
+      257          st.stop()
+      258      st.session_state.messages.append({"role": "user", "content
+           ": user_input})
+      259 -    with st.spinner("답변 생성 중..."):                       
+      260 -        answer = get_rag_answer(                              
+      261 -            query=user_input,                                 
+      262 -            doc_text=st.session_state.doc_text,               
+      263 -            model_id=selected_model_id,                       
+      264 -            api_key=api_key,                                  
+      265 -            chat_history=st.session_state.messages[:-1],      
+      266 -            vector_store=st.session_state.vector_store,       
+      259 +    with st.chat_message("assistant"):                        
+      260 +        answer = st.write_stream(                             
+      261 +            stream_rag_answer(                                
+      262 +                query=user_input,                             
+      263 +                doc_text=st.session_state.doc_text,           
+      264 +                model_id=selected_model_id,                   
+      265 +                api_key=api_key,                              
+      266 +                chat_history=st.session_state.messages[:-1],  
+      267 +                vector_store=st.session_state.vector_store,   
+      268 +            )                                                 
+      269          )
+      270      st.session_state.messages.append({"role": "assistant", "co
+           ntent": answer})
+      271      st.rerun()
+
+● 완료됐습니다. 변경 내용:
+
+  - llm_logic.py: _stream_llm() 제너레이터와 stream_rag_answer() 함수를
+  추가했습니다. 각 프로바이더별 스트리밍 API를 사용합니다:
+    - Anthropic: client.messages.stream()
+    - OpenAI / Groq: stream=True
+    - Google Gemini: send_message(..., stream=True)
+  - app.py: st.spinner 대신 st.write_stream()을 사용해 답변이 생성되는 즉시
+  화면에 표시됩니다.
+
+✻ Brewed for 37s
+
+❯ 여전히 똑같은데 일단 내 질문은 입력 즉시 바로 표시해줘 그리고 답변 일부라도   
+  생기면 바로 화면에 표시해줘                                                   
+
+  Read 1 file (ctrl+o to expand)
+
+● 문제는 구조적입니다. 채팅 메시지 렌더링이 tab_chat 안에 있는데 스트리밍은 탭
+  밖에서 실행되고 있습니다. 전체 채팅 흐름을 재구성합니다.
+
+  Read 1 file (ctrl+o to expand)
+
+● 전체 채팅 흐름을 재구성합니다. user_input 캡처를 탭 앞으로 이동하고,
+  스트리밍을 tab_chat 컨테이너 안에서 실행합니다.
+● Update(app.py)
+  ⎿  Added 28 lines
+      107  # ════════════════════════════════════════════════════════════
+           ══════════════════
+      108  st.title("📄 OmniDocs")
+      109  
+      110 +# ── 채팅 입력을 탭보다 먼저 처리 → 사용자 메시지를 즉시 sessi
+          +on_state에 저장 ──                                            
+      111 +user_input = st.chat_input(                                   
+      112 +    "👈 사이드바에서 PDF 또는 TXT 문서를 먼저 업로드해주세요."
+          + if not st.session_state.doc_text else                        
+      113 +    "문서에 대해 무엇이든 물어보세요...",                     
+      114 +    disabled=not st.session_state.doc_text,                   
+      115 +)                                                             
+      116 +                                                              
+      117 +if user_input and st.session_state.doc_text:                  
+      118 +    if not api_key:                                           
+      119 +        st.error("API Key를 입력해주세요.")                   
+      120 +        st.stop()                                             
+      121 +    st.session_state.messages.append({"role": "user", "content
+          +": user_input})                                               
+      122 +                                                              
+      123  tab_chat, tab_quiz = st.tabs(["💬 Chat", "📝 Quiz"])
+      124  
+      125  
+     ...
+      160                              )
+      161                              st.rerun()
+      162  
+      163 +            # ── 마지막 메시지가 user면 스트리밍 응답 시작 ───
+          +───────────────────                                           
+      164 +            if st.session_state.messages and st.session_state.
+          +messages[-1]["role"] == "user":                               
+      165 +                answer = st.write_stream(                     
+      166 +                    stream_rag_answer(                        
+      167 +                        query=st.session_state.messages[-1]["c
+          +ontent"],                                                     
+      168 +                        doc_text=st.session_state.doc_text,   
+      169 +                        model_id=selected_model_id,           
+      170 +                        api_key=api_key,                      
+      171 +                        chat_history=st.session_state.messages
+          +[:-1],                                                        
+      172 +                        vector_store=st.session_state.vector_s
+          +tore,                                                         
+      173 +                    )                                         
+      174 +                )                                             
+      175 +                st.session_state.messages.append({"role": "ass
+          +istant", "content": answer})                                  
+      176 +                st.rerun()                                    
+      177  
+      178 +                                                              
+      179  # ════════════════════════════════════════════════════════════
+           ══════════════════
+      180  # TAB 2 — QUIZ
+      181  # ════════════════════════════════════════════════════════════
+           ══════════════════
+
+● 이제 하단의 기존 chat_input 및 처리 코드를 제거합니다.
+
+● Update(app.py)
+  ⎿  Removed 27 lines
+      270                          st.rerun()
+      271  
+      272  
+      273 -# ════════════════════════════════════════════════════════════
+          -══════════════════                                            
+      274 -# CHAT INPUT — body 최하단 고정 (st.chat_input은 항상 페이지  
+          -하단에 고정됨)                                                
+      275 -# ════════════════════════════════════════════════════════════
+          -══════════════════                                            
+      276 -user_input = st.chat_input(                                   
+      277 -    "👈 사이드바에서 PDF 또는 TXT 문서를 먼저 업로드해주세요."
+          - if not st.session_state.doc_text else                        
+      278 -    "문서에 대해 무엇이든 물어보세요...",                     
+      279 -    disabled=not st.session_state.doc_text,                   
+      280 -)                                                             
+      281 -                                                              
+      282 -if user_input and st.session_state.doc_text:                  
+      283 -    if not api_key:                                           
+      284 -        st.error("API Key를 입력해주세요.")                   
+      285 -        st.stop()                                             
+      286 -    st.session_state.messages.append({"role": "user", "content
+          -": user_input})                                               
+      287 -    with st.chat_message("assistant"):                        
+      288 -        answer = st.write_stream(                             
+      289 -            stream_rag_answer(                                
+      290 -                query=user_input,                             
+      291 -                doc_text=st.session_state.doc_text,           
+      292 -                model_id=selected_model_id,                   
+      293 -                api_key=api_key,                              
+      294 -                chat_history=st.session_state.messages[:-1],  
+      295 -                vector_store=st.session_state.vector_store,   
+      296 -            )                                                 
+      297 -        )                                                     
+      298 -    st.session_state.messages.append({"role": "assistant", "co
+          -ntent": answer})                                              
+      299 -    st.rerun()                                                
+
+● 완료됐습니다. 변경된 흐름:
+
+  1. 질문 입력 즉시 → st.chat_input이 탭보다 앞에서 처리되므로, 제출하면 바로
+  session_state에 저장되고 채팅 영역에 표시됩니다.
+  2. 답변 스트리밍 → 채팅 컨테이너 안에서 마지막 메시지가 user이면 바로
+  st.write_stream으로 글자가 실시간으로 나타납니다.
+  3. 스트리밍 완료 후 rerun하여 답변을 커스텀 스타일(chat-assistant)로
+  재렌더링합니다.
+
+✻ Worked for 1m 28s
+
+❯ drag and drop file here 이 부분 파일이 업로드 되어있으면 안보이게 바꿔주고    
+  기존업로드된 파일 x눌렀을 때(파일이 없을 때)다시 보이게 해줘                  
+
+● 파일이 로드된 상태면 업로더를 숨기고, X 버튼으로 파일을 제거하면 다시 보이도록
+   조건부 렌더링으로 변경합니다.
+
+  Read 1 file (ctrl+o to expand)
+
+● Update(app.py)
+  ⎿  Added 23 lines, removed 15 lines
+      62  
+      63      # ── 3. 문서 업로드 ───────────────────────────────────────
+          ───────────────────
+      64      st.subheader("📁 문서 업로드")
+      65 -    uploaded_file = st.file_uploader(                          
+      66 -        "PDF 또는 TXT 파일을 업로드하세요",                    
+      67 -        type=["pdf", "txt"],                                   
+      68 -        key="file_uploader",                                   
+      69 -        help="최대 200 MB · PDF / TXT 형식 지원",              
+      70 -    )                                                          
+      65  
+      72 -    if uploaded_file:                                          
+      73 -        if st.session_state.doc_name != uploaded_file.name:    
+      66 +    if st.session_state.doc_name:                              
+      67 +        # 파일이 로드된 상태: 업로더 숨기고 파일명 + X 버튼 표 
+         +시                                                             
+      68 +        col_name, col_x = st.columns([9, 1])                   
+      69 +        with col_name:                                         
+      70 +            st.info(f"📄 **{st.session_state.doc_name}**")     
+      71 +        with col_x:                                            
+      72 +            if st.button("✕", key="clear_file"):               
+      73 +                for k, v in defaults.items():                  
+      74 +                    st.session_state[k] = v                    
+      75 +                st.rerun()                                     
+      76 +        chars = len(st.session_state.doc_text or "")           
+      77 +        chunk_count = get_chunk_count(st.session_state.vector_s
+         +tore) if st.session_state.vector_store else 0                  
+      78 +        st.caption(f"추출 문자 수: {chars:,}자 · 청크 수: {chun
+         +k_count}개")                                                   
+      79 +    else:                                                      
+      80 +        # 파일 없음: 업로더 표시                               
+      81 +        uploaded_file = st.file_uploader(                      
+      82 +            "PDF 또는 TXT 파일을 업로드하세요",                
+      83 +            type=["pdf", "txt"],                               
+      84 +            key="file_uploader",                               
+      85 +            help="최대 200 MB · PDF / TXT 형식 지원",          
+      86 +        )                                                      
+      87 +        if uploaded_file:                                      
+      88              with st.spinner("텍스트 추출 중..."):
+      89                  text = extract_text_from_file(uploaded_file)
+      90                  st.session_state.doc_text = text
+      91                  st.session_state.doc_name = uploaded_file.name
+      78 -                # 새 문서 → 대화·퀴즈 초기화                   
+      92                  st.session_state.messages = []
+      93                  st.session_state.feedback = {}
+      94                  st.session_state.quiz_questions = []
+     ...
+       99                  st.session_state.vector_store = build_vector_s
+           tore(
+      100                      text, source_name=uploaded_file.name
+      101                  )
+       89 -            chunk_count = get_chunk_count(st.session_state.vec
+          -tor_store)                                                    
+       90 -            st.success(f"✅ **{uploaded_file.name}** 로드 완료
+          -")                                                            
+       91 -            chars = len(st.session_state.doc_text or "")      
+       92 -            st.caption(f"추출 문자 수: {chars:,}자 · 청크 수: 
+          -{chunk_count}개")                                             
+       93 -    elif st.session_state.doc_name:                           
+       94 -        st.info(f"현재 문서: **{st.session_state.doc_name}**")
+      102 +            st.rerun()                                        
+      103  
+      104      st.markdown('<hr class="section">', unsafe_allow_html=True
+           )
+      105  
+
+● 완료됐습니다. 동작 방식:
+
+  - 파일 없을 때 → Drag & Drop 업로더 표시
+  - 파일 로드 후 → 업로더 숨김, 파일명과 ✕ 버튼만 표시
+  - ✕ 클릭 → 상태 초기화 후 업로더 다시 표시
+
+✻ Sautéed for 47s
+
+❯ llm이 답변 완료 했을 때 자동으로 아래로  스크롤 되게 해줘                     
+
+● Streamlit에서 컨테이너 자동 스크롤은 JS 주입으로 구현해야 합니다. 메시지
+  렌더링 후 스크롤 스크립트를 실행합니다.
+
+  Read 1 file (ctrl+o to expand)
+
+● Update(app.py)
+  ⎿  Added 1 line, removed 1 line
+      137  with tab_chat:
+      138      if st.session_state.doc_text:
+      139          # ── 스크롤 가능한 대화 영역 ─────────────────────────
+           ─────────────────────
+      140 -        with st.container(height=480, border=False):          
+      140 +        with st.container(height=480, border=False, key="chat_
+          +container"):                                                  
+      141              for idx, msg in enumerate(st.session_state.message
+           s):
+      142                  if msg["role"] == "user":
+      143                      st.markdown(
+
+● Update(app.py)
+  ⎿  Added 11 lines
+      183                  st.session_state.messages.append({"role": "ass
+           istant", "content": answer})
+      184                  st.rerun()
+      185  
+      186 +            # ── 답변 완료 후 채팅 컨테이너 최하단 자동 스크롤
+          + ────────────────────                                         
+      187 +            st.components.v1.html(                            
+      188 +                """                                           
+      189 +                <script>                                      
+      190 +                    const container = window.parent.document.q
+          +uerySelector('[data-testid="stVerticalBlockBorderWrapper"]'); 
+      191 +                    if (container) container.scrollTop = conta
+          +iner.scrollHeight;                                            
+      192 +                </script>                                     
+      193 +                """,                                          
+      194 +                height=0,                                     
+      195 +            )                                                 
+      196  
+      197 +                                                              
+      198  # ════════════════════════════════════════════════════════════
+           ══════════════════
+      199  # TAB 2 — QUIZ
+      200  # ════════════════════════════════════════════════════════════
+           ══════════════════
+
+● st.components.v1이 import되어 있는지 확인합니다.
+
+  Read 1 file (ctrl+o to expand)
+
+● Update(app.py)
+  ⎿  Added 1 line
+      1  import os
+      2  import streamlit as st
+      3 +import streamlit.components.v1 as components                    
+      4  from dotenv import load_dotenv
+      5  
+      6  load_dotenv()
+
+● Update(app.py)
+  ⎿  Added 1 line, removed 1 line
+      185                  st.rerun()
+      186  
+      187              # ── 답변 완료 후 채팅 컨테이너 최하단 자동 스크롤
+            ────────────────────
+      188 -            st.components.v1.html(                            
+      188 +            components.html(                                  
+      189                  """
+      190                  <script>
+      191                      const container = window.parent.document.q
+           uerySelector('[data-testid="stVerticalBlockBorderWrapper"]');
+
+● 완료됐습니다. 동작 방식:
+
+  - 답변 완료 후 rerun 시, 채팅 컨테이너(stVerticalBlockBorderWrapper)를 JS로
+  찾아 scrollTop = scrollHeight로 최하단 스크롤합니다.
+  - height=0으로 설정해 JS 실행 iframe이 화면에 보이지 않습니다.
+
+✻ Baked for 47s
+
+❯ 지금 chat/quiz탭으로 나누어져 있는데 탭이 아니라 아예 화면을 2개로 분할해서   
+  chat 탭, quiz탭으로 만들어줘                                                  
+
+  Read 1 file (ctrl+o to expand)
+
+● st.tabs 대신 st.columns로 좌/우 분할 화면으로 변경합니다.
+
+● Update(app.py)
+  ⎿  Added 13 lines, removed 15 lines
+      129          st.stop()
+      130      st.session_state.messages.append({"role": "user", "content
+           ": user_input})
+      131  
+      132 -tab_chat, tab_quiz = st.tabs(["💬 Chat", "📝 Quiz"])          
+      132 +col_chat, col_quiz = st.columns(2, gap="large")               
+      133  
+      134  
+      135  # ════════════════════════════════════════════════════════════
+           ══════════════════
+      136 -# TAB 1 — CHAT                                                
+      136 +# 왼쪽 패널 — CHAT                                            
+      137  # ════════════════════════════════════════════════════════════
+           ══════════════════
+      138 -with tab_chat:                                                
+      138 +with col_chat:                                                
+      139 +    st.subheader("💬 Chat")                                   
+      140      if st.session_state.doc_text:
+      140 -        # ── 스크롤 가능한 대화 영역 ─────────────────────────
+          -─────────────────────                                         
+      141          with st.container(height=480, border=False, key="chat_
+           container"):
+      142              for idx, msg in enumerate(st.session_state.message
+           s):
+      143                  if msg["role"] == "user":
+     ...
+      151                          unsafe_allow_html=True,
+      152                      )
+      153  
+      154 -                    # 피드백 버튼 (assistant 메시지에만)      
+      154                      current_fb = st.session_state.feedback.get
+           (idx)
+      155                      col_like, col_dislike, col_spacer = st.col
+           umns([1, 1, 10])
+      156                      with col_like:
+     ...
+      168                              )
+      169                              st.rerun()
+      170  
+      172 -            # ── 마지막 메시지가 user면 스트리밍 응답 시작 ───
+          -───────────────────                                           
+      171              if st.session_state.messages and st.session_state.
+           messages[-1]["role"] == "user":
+      172                  answer = st.write_stream(
+      173                      stream_rag_answer(
+     ...
+      182                  st.session_state.messages.append({"role": "ass
+           istant", "content": answer})
+      183                  st.rerun()
+      184  
+      187 -            # ── 답변 완료 후 채팅 컨테이너 최하단 자동 스크롤
+          - ────────────────────                                         
+      185              components.html(
+      186                  """
+      187                  <script>
+     ...
+      191                  """,
+      192                  height=0,
+      193              )
+      194 +    else:                                                     
+      195 +        st.info("👈 사이드바에서 문서를 먼저 업로드해주세요.")
+      196  
+      197  
+      198  # ════════════════════════════════════════════════════════════
+           ══════════════════
+      200 -# TAB 2 — QUIZ                                                
+      199 +# 오른쪽 패널 — QUIZ                                          
+      200  # ════════════════════════════════════════════════════════════
+           ══════════════════
+      202 -with tab_quiz:                                                
+      201 +with col_quiz:                                                
+      202 +    st.subheader("📝 Quiz")                                   
+      203      if st.session_state.doc_text:
+      204 -        st.subheader("📝 문서 기반 퀴즈")                     
+      204          st.caption("업로드된 문서 내용을 바탕으로 객관식 3문제
+           를 자동 생성합니다.")
+      205  
+      206          col_gen, _ = st.columns([2, 5])
+     ...
+      226              st.session_state.quiz_submitted = False
+      227              st.rerun()
+      228  
+      230 -        # ── 스크롤 가능한 퀴즈 영역 ─────────────────────────
+          -─────────────────────                                         
+      229          with st.container(height=500, border=False):
+      230              if st.session_state.quiz_questions:
+      231                  with st.form(key="quiz_form"):
+     ...
+      236                              f'</div>',
+      237                              unsafe_allow_html=True,
+      238                          )
+      241 -                        choice = st.radio(                    
+      239 +                        st.radio(                             
+      240                              f"Q{q_idx + 1} 선택",
+      241                              options=q["options"],
+      242                              key=f"quiz_radio_{q_idx}",
+     ...
+      251  
+      252                  if submit_quiz:
+      253                      for q_idx in range(len(st.session_state.qu
+           iz_questions)):
+      256 -                        radio_key = f"quiz_radio_{q_idx}"     
+      254                          st.session_state.quiz_answers[q_idx] =
+            st.session_state.get(
+      258 -                            radio_key                         
+      255 +                            f"quiz_radio_{q_idx}"             
+      256                          )
+      257                      st.session_state.quiz_submitted = True
+      258                      st.rerun()
+      259  
+      263 -                # 채점 결과 표시                              
+      260                  if st.session_state.quiz_submitted:
+      261                      st.markdown("---")
+      262                      st.subheader("🏆 채점 결과")
+     ...
+      284                          st.session_state.quiz_answers = {}
+      285                          st.session_state.quiz_submitted = Fals
+           e
+      286                          st.rerun()
+      287 +    else:                                                     
+      288 +        st.info("👈 사이드바에서 문서를 먼저 업로드해주세요.")
+      289  
+      290  
+
+● 완료됐습니다. 변경 내용:
+
+  - st.tabs → st.columns(2, gap="large")로 교체해 좌/우 분할 화면 적용
+  - 왼쪽: 💬 Chat 패널
+  - 오른쪽: 📝 Quiz 패널
+  - 문서 미업로드 시 양쪽 모두 안내 메시지 표시
+
+✻ Crunched for 1m 1s
+❯ 채팅 입력창은 채팅쪽에만 보이게 바꿔주고 google의 notebookLM 디자인처럼       
+  chat이랑 quiz를 감싸는 둥근 사각형을 만들어줘                                 
+
+  Read 2 files (ctrl+o to expand)
+
+● 두 가지 변경이 필요합니다. app.py에서 패널 구조 수정, style.css에서 NotebookLM
+   스타일 카드 적용.
+
+● Update(app.py)
+  ⎿  Added 70 lines, removed 67 lines
+      116  # MAIN AREA
+      117  # ════════════════════════════════════════════════════════════
+           ══════════════════
+      118  
+      119 -# ── 채팅 입력을 탭보다 먼저 처리 → 사용자 메시지를 즉시 sessi
+          -on_state에 저장 ──                                            
+      120 -user_input = st.chat_input(                                   
+      121 -    "👈 사이드바에서 PDF 또는 TXT 문서를 먼저 업로드해주세요."
+          - if not st.session_state.doc_text else                        
+      122 -    "문서에 대해 무엇이든 물어보세요...",                     
+      123 -    disabled=not st.session_state.doc_text,                   
+      124 -)                                                             
+      119 +col_chat, col_quiz = st.columns(2, gap="medium")              
+      120  
+      126 -if user_input and st.session_state.doc_text:                  
+      127 -    if not api_key:                                           
+      128 -        st.error("API Key를 입력해주세요.")                   
+      129 -        st.stop()                                             
+      130 -    st.session_state.messages.append({"role": "user", "content
+          -": user_input})                                               
+      121  
+      132 -col_chat, col_quiz = st.columns(2, gap="large")               
+      133 -                                                              
+      134 -                                                              
+      122  # ════════════════════════════════════════════════════════════
+           ══════════════════
+      123  # 왼쪽 패널 — CHAT
+      124  # ════════════════════════════════════════════════════════════
+           ══════════════════
+      125  with col_chat:
+      139 -    st.subheader("💬 Chat")                                   
+      140 -    if st.session_state.doc_text:                             
+      141 -        with st.container(height=480, border=False, key="chat_
+          -container"):                                                  
+      142 -            for idx, msg in enumerate(st.session_state.message
+          -s):                                                           
+      143 -                if msg["role"] == "user":                     
+      144 -                    st.markdown(                              
+      145 -                        f'<div class="chat-user">🧑 {msg["cont
+          -ent"]}</div>',                                                
+      146 -                        unsafe_allow_html=True,               
+      147 -                    )                                         
+      148 -                else:                                         
+      149 -                    st.markdown(                              
+      150 -                        f'<div class="chat-assistant">🤖 {msg[
+          -"content"]}</div>',                                           
+      151 -                        unsafe_allow_html=True,               
+      152 -                    )                                         
+      126 +    with st.container(border=True):                           
+      127 +        st.markdown('<p class="panel-title">💬 Chat</p>', unsa
+          +fe_allow_html=True)                                           
+      128  
+      154 -                    current_fb = st.session_state.feedback.get
+          -(idx)                                                         
+      155 -                    col_like, col_dislike, col_spacer = st.col
+          -umns([1, 1, 10])                                              
+      156 -                    with col_like:                            
+      157 -                        like_type = "primary" if current_fb ==
+          - "like" else "secondary"                                      
+      158 -                        if st.button("👍", key=f"like_{idx}", 
+          -type=like_type):                                              
+      159 -                            st.session_state.feedback[idx] = (
+      160 -                                None if current_fb == "like" e
+          -lse "like"                                                    
+      161 -                            )                                 
+      162 -                            st.rerun()                        
+      163 -                    with col_dislike:                         
+      164 -                        dislike_type = "primary" if current_fb
+          - == "dislike" else "secondary"                                
+      165 -                        if st.button("👎", key=f"dislike_{idx}
+          -", type=dislike_type):                                        
+      166 -                            st.session_state.feedback[idx] = (
+      167 -                                None if current_fb == "dislike
+          -" else "dislike"                                              
+      168 -                            )                                 
+      169 -                            st.rerun()                        
+      129 +        # chat_input은 코드 위치에 관계없이 시각적으로 패널 하
+          +단에 고정됨                                                   
+      130 +        user_input = st.chat_input(                           
+      131 +            "👈 문서를 먼저 업로드해주세요." if not st.session
+          +_state.doc_text else                                          
+      132 +            "문서에 대해 무엇이든 물어보세요...",             
+      133 +            disabled=not st.session_state.doc_text,           
+      134 +            key="chat_input",                                 
+      135 +        )                                                     
+      136  
+      171 -            if st.session_state.messages and st.session_state.
+          -messages[-1]["role"] == "user":                               
+      172 -                answer = st.write_stream(                     
+      173 -                    stream_rag_answer(                        
+      174 -                        query=st.session_state.messages[-1]["c
+          -ontent"],                                                     
+      175 -                        doc_text=st.session_state.doc_text,   
+      176 -                        model_id=selected_model_id,           
+      177 -                        api_key=api_key,                      
+      178 -                        chat_history=st.session_state.messages
+          -[:-1],                                                        
+      179 -                        vector_store=st.session_state.vector_s
+          -tore,                                                         
+      137 +        if user_input and st.session_state.doc_text:          
+      138 +            if not api_key:                                   
+      139 +                st.error("API Key를 입력해주세요.")           
+      140 +                st.stop()                                     
+      141 +            st.session_state.messages.append({"role": "user", 
+          +"content": user_input})                                       
+      142 +                                                              
+      143 +        if st.session_state.doc_text:                         
+      144 +            with st.container(height=460, border=False, key="c
+          +hat_container"):                                              
+      145 +                for idx, msg in enumerate(st.session_state.mes
+          +sages):                                                       
+      146 +                    if msg["role"] == "user":                 
+      147 +                        st.markdown(                          
+      148 +                            f'<div class="chat-user">🧑 {msg["
+          +content"]}</div>',                                            
+      149 +                            unsafe_allow_html=True,           
+      150 +                        )                                     
+      151 +                    else:                                     
+      152 +                        st.markdown(                          
+      153 +                            f'<div class="chat-assistant">🤖 {
+          +msg["content"]}</div>',                                       
+      154 +                            unsafe_allow_html=True,           
+      155 +                        )                                     
+      156 +                                                              
+      157 +                        current_fb = st.session_state.feedback
+          +.get(idx)                                                     
+      158 +                        col_like, col_dislike, col_spacer = st
+          +.columns([1, 1, 10])                                          
+      159 +                        with col_like:                        
+      160 +                            like_type = "primary" if current_f
+          +b == "like" else "secondary"                                  
+      161 +                            if st.button("👍", key=f"like_{idx
+          +}", type=like_type):                                          
+      162 +                                st.session_state.feedback[idx]
+          + = (                                                          
+      163 +                                    None if current_fb == "lik
+          +e" else "like"                                                
+      164 +                                )                             
+      165 +                                st.rerun()                    
+      166 +                        with col_dislike:                     
+      167 +                            dislike_type = "primary" if curren
+          +t_fb == "dislike" else "secondary"                            
+      168 +                            if st.button("👎", key=f"dislike_{
+          +idx}", type=dislike_type):                                    
+      169 +                                st.session_state.feedback[idx]
+          + = (                                                          
+      170 +                                    None if current_fb == "dis
+          +like" else "dislike"                                          
+      171 +                                )                             
+      172 +                                st.rerun()                    
+      173 +                                                              
+      174 +                if st.session_state.messages and st.session_st
+          +ate.messages[-1]["role"] == "user":                           
+      175 +                    answer = st.write_stream(                 
+      176 +                        stream_rag_answer(                    
+      177 +                            query=st.session_state.messages[-1
+          +]["content"],                                                 
+      178 +                            doc_text=st.session_state.doc_text
+          +,                                                             
+      179 +                            model_id=selected_model_id,       
+      180 +                            api_key=api_key,                  
+      181 +                            chat_history=st.session_state.mess
+          +ages[:-1],                                                    
+      182 +                            vector_store=st.session_state.vect
+          +or_store,                                                     
+      183 +                        )                                     
+      184                      )
+      185 +                    st.session_state.messages.append({"role": 
+          +"assistant", "content": answer})                              
+      186 +                    st.rerun()                                
+      187 +                                                              
+      188 +                components.html(                              
+      189 +                    """                                       
+      190 +                    <script>                                  
+      191 +                        const container = window.parent.docume
+          +nt.querySelector('[data-testid="stVerticalBlockBorderWrapper"]
+          +');                                                           
+      192 +                        if (container) container.scrollTop = c
+          +ontainer.scrollHeight;                                        
+      193 +                    </script>                                 
+      194 +                    """,                                      
+      195 +                    height=0,                                 
+      196                  )
+      182 -                st.session_state.messages.append({"role": "ass
+          -istant", "content": answer})                                  
+      183 -                st.rerun()                                    
+      197 +        else:                                                 
+      198 +            st.markdown('<p class="panel-empty">👈 사이드바에 
+          +서 문서를 먼저 업로드해주세요.</p>', unsafe_allow_html=True)  
+      199  
+      185 -            components.html(                                  
+      186 -                """                                           
+      187 -                <script>                                      
+      188 -                    const container = window.parent.document.q
+          -uerySelector('[data-testid="stVerticalBlockBorderWrapper"]'); 
+      189 -                    if (container) container.scrollTop = conta
+          -iner.scrollHeight;                                            
+      190 -                </script>                                     
+      191 -                """,                                          
+      192 -                height=0,                                     
+      193 -            )                                                 
+      194 -    else:                                                     
+      195 -        st.info("👈 사이드바에서 문서를 먼저 업로드해주세요.")
+      200  
+      197 -                                                              
+      201  # ════════════════════════════════════════════════════════════
+           ══════════════════
+      202  # 오른쪽 패널 — QUIZ
+      203  # ════════════════════════════════════════════════════════════
+           ══════════════════
+
+● 이제 Quiz 패널도 카드로 감쌉니다.
+
+  Read 1 file (ctrl+o to expand)
+
+● Update(app.py)
+  ⎿  Added 77 lines, removed 77 lines
+      202  # 오른쪽 패널 — QUIZ
+      203  # ════════════════════════════════════════════════════════════
+           ══════════════════
+      204  with col_quiz:
+      205 -    st.subheader("📝 Quiz")                                   
+      206 -    if st.session_state.doc_text:                             
+      207 -        st.caption("업로드된 문서 내용을 바탕으로 객관식 3문제
+          -를 자동 생성합니다.")                                         
+      205 +    with st.container(border=True):                           
+      206 +        st.markdown('<p class="panel-title">📝 Quiz</p>', unsa
+          +fe_allow_html=True)                                           
+      207  
+      209 -        col_gen, _ = st.columns([2, 5])                       
+      210 -        with col_gen:                                         
+      211 -            gen_btn = st.button(                              
+      212 -                "🎲 퀴즈 생성",                               
+      213 -                use_container_width=True,                     
+      214 -                disabled=st.session_state.quiz_submitted,     
+      215 -            )                                                 
+      216 -                                                              
+      217 -        if gen_btn:                                           
+      218 -            if not api_key:                                   
+      219 -                st.error("API Key를 입력해주세요.")           
+      220 -                st.stop()                                     
+      221 -            with st.spinner("퀴즈 생성 중..."):               
+      222 -                questions = generate_quiz(                    
+      223 -                    doc_text=st.session_state.doc_text,       
+      224 -                    model_id=selected_model_id,               
+      225 -                    api_key=api_key,                          
+      208 +        if st.session_state.doc_text:                         
+      209 +            col_gen, _ = st.columns([2, 5])                   
+      210 +            with col_gen:                                     
+      211 +                gen_btn = st.button(                          
+      212 +                    "🎲 퀴즈 생성",                           
+      213 +                    use_container_width=True,                 
+      214 +                    disabled=st.session_state.quiz_submitted, 
+      215                  )
+      227 -            st.session_state.quiz_questions = questions       
+      228 -            st.session_state.quiz_answers = {}                
+      229 -            st.session_state.quiz_submitted = False           
+      230 -            st.rerun()                                        
+      216  
+      232 -        with st.container(height=500, border=False):          
+      233 -            if st.session_state.quiz_questions:               
+      234 -                with st.form(key="quiz_form"):                
+      235 -                    for q_idx, q in enumerate(st.session_state
+          -.quiz_questions):                                             
+      236 -                        st.markdown(                          
+      237 -                            f'<div class="quiz-card">'        
+      238 -                            f'<b>Q{q_idx + 1}.</b> {q["questio
+          -n"]}'                                                         
+      239 -                            f'</div>',                        
+      240 -                            unsafe_allow_html=True,           
+      241 -                        )                                     
+      242 -                        st.radio(                             
+      243 -                            f"Q{q_idx + 1} 선택",             
+      244 -                            options=q["options"],             
+      245 -                            key=f"quiz_radio_{q_idx}",        
+      246 -                            label_visibility="collapsed",     
+      247 -                        )                                     
+      248 -                                                              
+      249 -                    submit_quiz = st.form_submit_button(      
+      250 -                        "✅ 제출",                            
+      251 -                        disabled=st.session_state.quiz_submitt
+          -ed,                                                           
+      252 -                        use_container_width=False,            
+      217 +            if gen_btn:                                       
+      218 +                if not api_key:                               
+      219 +                    st.error("API Key를 입력해주세요.")       
+      220 +                    st.stop()                                 
+      221 +                with st.spinner("퀴즈 생성 중..."):           
+      222 +                    questions = generate_quiz(                
+      223 +                        doc_text=st.session_state.doc_text,   
+      224 +                        model_id=selected_model_id,           
+      225 +                        api_key=api_key,                      
+      226                      )
+      227 +                st.session_state.quiz_questions = questions   
+      228 +                st.session_state.quiz_answers = {}            
+      229 +                st.session_state.quiz_submitted = False       
+      230 +                st.rerun()                                    
+      231  
+      255 -                if submit_quiz:                               
+      256 -                    for q_idx in range(len(st.session_state.qu
+          -iz_questions)):                                               
+      257 -                        st.session_state.quiz_answers[q_idx] =
+          - st.session_state.get(                                        
+      258 -                            f"quiz_radio_{q_idx}"             
+      259 -                        )                                     
+      260 -                    st.session_state.quiz_submitted = True    
+      261 -                    st.rerun()                                
+      232 +            with st.container(height=500, border=False):      
+      233 +                if st.session_state.quiz_questions:           
+      234 +                    with st.form(key="quiz_form"):            
+      235 +                        for q_idx, q in enumerate(st.session_s
+          +tate.quiz_questions):                                         
+      236 +                            st.markdown(                      
+      237 +                                f'<div class="quiz-card">'    
+      238 +                                f'<b>Q{q_idx + 1}.</b> {q["que
+          +stion"]}'                                                     
+      239 +                                f'</div>',                    
+      240 +                                unsafe_allow_html=True,       
+      241 +                            )                                 
+      242 +                            st.radio(                         
+      243 +                                f"Q{q_idx + 1} 선택",         
+      244 +                                options=q["options"],         
+      245 +                                key=f"quiz_radio_{q_idx}",    
+      246 +                                label_visibility="collapsed", 
+      247 +                            )                                 
+      248  
+      263 -                if st.session_state.quiz_submitted:           
+      264 -                    st.markdown("---")                        
+      265 -                    st.subheader("🏆 채점 결과")              
+      266 -                    score = 0                                 
+      267 -                    for q_idx, q in enumerate(st.session_state
+          -.quiz_questions):                                             
+      268 -                        user_ans = st.session_state.quiz_answe
+          -rs.get(q_idx, "")                                             
+      269 -                        correct = q["answer"]                 
+      270 -                        is_correct = user_ans == correct      
+      271 -                        if is_correct:                        
+      272 -                            score += 1                        
+      273 -                        icon = "✅" if is_correct else "❌"   
+      274 -                        st.markdown(                          
+      275 -                            f"**Q{q_idx + 1}.** {q['question']
+          -}  \n"                                                        
+      276 -                            f"{icon} 선택: **{user_ans}**  \n"
+      277 -                            f"정답: **{correct}**"            
+      249 +                        submit_quiz = st.form_submit_button(  
+      250 +                            "✅ 제출",                        
+      251 +                            disabled=st.session_state.quiz_sub
+          +mitted,                                                       
+      252 +                            use_container_width=False,        
+      253                          )
+      254 +                                                              
+      255 +                    if submit_quiz:                           
+      256 +                        for q_idx in range(len(st.session_stat
+          +e.quiz_questions)):                                           
+      257 +                            st.session_state.quiz_answers[q_id
+          +x] = st.session_state.get(                                    
+      258 +                                f"quiz_radio_{q_idx}"         
+      259 +                            )                                 
+      260 +                        st.session_state.quiz_submitted = True
+      261 +                        st.rerun()                            
+      262 +                                                              
+      263 +                    if st.session_state.quiz_submitted:       
+      264                          st.markdown("---")
+      265 +                        st.subheader("🏆 채점 결과")          
+      266 +                        score = 0                             
+      267 +                        for q_idx, q in enumerate(st.session_s
+          +tate.quiz_questions):                                         
+      268 +                            user_ans = st.session_state.quiz_a
+          +nswers.get(q_idx, "")                                         
+      269 +                            correct = q["answer"]             
+      270 +                            is_correct = user_ans == correct  
+      271 +                            if is_correct:                    
+      272 +                                score += 1                    
+      273 +                            icon = "✅" if is_correct else "❌
+          +"                                                             
+      274 +                            st.markdown(                      
+      275 +                                f"**Q{q_idx + 1}.** {q['questi
+          +on']}  \n"                                                    
+      276 +                                f"{icon} 선택: **{user_ans}** 
+          + \n"                                                          
+      277 +                                f"정답: **{correct}**"        
+      278 +                            )                                 
+      279 +                            st.markdown("---")                
+      280  
+      281 -                    total = len(st.session_state.quiz_question
+          -s)                                                            
+      282 -                    pct = int(score / total * 100) if total el
+          -se 0                                                          
+      283 -                    st.metric("점수", f"{score} / {total}", f"
+          -{pct}%")                                                      
+      281 +                        total = len(st.session_state.quiz_ques
+          +tions)                                                        
+      282 +                        pct = int(score / total * 100) if tota
+          +l else 0                                                      
+      283 +                        st.metric("점수", f"{score} / {total}"
+          +, f"{pct}%")                                                  
+      284  
+      285 -                    if st.button("🔄 다시 풀기"):             
+      286 -                        st.session_state.quiz_questions = []  
+      287 -                        st.session_state.quiz_answers = {}    
+      288 -                        st.session_state.quiz_submitted = Fals
+          -e                                                             
+      289 -                        st.rerun()                            
+      290 -    else:                                                     
+      291 -        st.info("👈 사이드바에서 문서를 먼저 업로드해주세요.")
+      285 +                        if st.button("🔄 다시 풀기"):         
+      286 +                            st.session_state.quiz_questions = 
+          +[]                                                            
+      287 +                            st.session_state.quiz_answers = {}
+      288 +                            st.session_state.quiz_submitted = 
+          +False                                                         
+      289 +                            st.rerun()                        
+      290 +        else:                                                 
+      291 +            st.markdown('<p class="panel-empty">👈 사이드바에 
+          +서 문서를 먼저 업로드해주세요.</p>', unsafe_allow_html=True)  
+      292  
+      293  
+
+● 이제 NotebookLM 스타일의 CSS를 작성합니다.
+
+● Write(style.css)
+  ⎿  Added 103 lines, removed 56 lines
+       1 -/* ── 채팅 말풍선 ─────────────────────────────────────────────
+         -────────────── */                                              
+       2 -.chat-user {                                                   
+       3 -  background: #e8f4fd;                                         
+       4 -  border-radius: 12px 12px 2px 12px;                           
+       5 -  padding: 0.7rem 1rem;                                        
+       6 -  margin: 0.4rem 0 0.4rem auto;                                
+       7 -  text-align: right;                                           
+       8 -  color: #1a1a2e;                                              
+       9 -  width: max-content;                                          
+      10 -  max-width: 80%;                                              
+       1 +/* ════════════════════════════════════════════════════════════
+         +══════════════                                                 
+       2 +   전역 배경 & 레이아웃                                        
+       3 +═══════════════════════════════════════════════════════════════
+         +═══════════ */                                                 
+       4 +[data-testid="stApp"] {                                        
+       5 +  background-color: #f0f4f9 !important;                        
+       6  }
+      12 -.chat-assistant {                                              
+      13 -  background: #f0f2f6;                                         
+      14 -  border-radius: 12px 12px 12px 2px;                           
+      15 -  padding: 0.7rem 1rem;                                        
+      16 -  margin: 0.4rem 0 4rem 0;                                     
+      17 -  color: #1a1a2e;                                              
+       7 +                                                               
+       8 +[data-testid="stMain"] {                                       
+       9 +  background-color: #f0f4f9 !important;                        
+      10  }
+      11  
+      20 -/* ── 피드백 버튼 영역 ────────────────────────────────────────
+         -────────────── */                                              
+      21 -.feedback-row {                                                
+      22 -  display: flex;                                               
+      23 -  gap: 0.5rem;                                                 
+      24 -  margin-top: 0.3rem;                                          
+      25 -  margin-left: 0.5rem;                                         
+      12 +[data-testid="stMainBlockContainer"] {                         
+      13 +  padding: 1.2rem 1.5rem 1rem !important;                      
+      14 +  background: transparent !important;                          
+      15  }
+      16  
+      28 -/* ── 퀴즈 카드 ───────────────────────────────────────────────
+         -────────────── */                                              
+      29 -.quiz-card {                                                   
+      30 -  background: #ffffff;                                         
+      31 -  border: 1px solid #dde3ec;                                   
+      32 -  border-radius: 10px;                                         
+      33 -  padding: 1.2rem 1.4rem;                                      
+      34 -  margin-bottom: 1.2rem;                                       
+      35 -  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);                   
+      17 +/* ════════════════════════════════════════════════════════════
+         +══════════════                                                 
+      18 +   패널 카드 (border=True 컨테이너)                            
+      19 +═══════════════════════════════════════════════════════════════
+         +═══════════ */                                                 
+      20 +[data-testid="stVerticalBlockBorderWrapper"] {                 
+      21 +  background: #ffffff !important;                              
+      22 +  border-radius: 20px !important;                              
+      23 +  border: 1px solid #dde3ec !important;                        
+      24 +  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07) !important;       
+      25 +  overflow: hidden;                                            
+      26 +  padding: 0 !important;                                       
+      27  }
+      28  
+      38 -/* ── 섹션 구분선 ─────────────────────────────────────────────
+         -────────────── */                                              
+      39 -hr.section {                                                   
+      40 -  border: none;                                                
+      41 -  border-top: 1px solid #e0e0e0;                               
+      42 -  margin: 1.2rem 0;                                            
+      29 +/* 카드 안쪽 여백 */                                           
+      30 +[data-testid="stVerticalBlockBorderWrapper"] > div {           
+      31 +  padding: 1.4rem 1.6rem 1rem !important;                      
+      32  }
+      33  
+      45 -/* ── UI 요소 숨기기 ──────────────────────────────────────────
+         -────────────── */                                              
+      46 -[data-testid="stAppDeployButton"] {                            
+      47 -  display: none !important;                                    
+      34 +/* ── 패널 타이틀 ─────────────────────────────────────────────
+         +────────────── */                                              
+      35 +p.panel-title {                                                
+      36 +  font-size: 1.1rem;                                           
+      37 +  font-weight: 700;                                            
+      38 +  color: #1a1a2e;                                              
+      39 +  margin: 0 0 1rem 0;                                          
+      40 +  padding-bottom: 0.75rem;                                     
+      41 +  border-bottom: 1px solid #eef0f5;                            
+      42  }
+      49 -[data-testid="stHeader"] {                                     
+      50 -  display: none !important;                                    
+      43 +                                                               
+      44 +/* ── 패널 빈 상태 안내 ───────────────────────────────────────
+         +───────────── */                                               
+      45 +p.panel-empty {                                                
+      46 +  color: #8a92a6;                                              
+      47 +  font-size: 0.9rem;                                           
+      48 +  text-align: center;                                          
+      49 +  margin-top: 2rem;                                            
+      50  }
+      52 -#MainMenu {                                                    
+      53 -  display: none !important;                                    
+      51 +                                                               
+      52 +/* ════════════════════════════════════════════════════════════
+         +══════════════                                                 
+      53 +   채팅 말풍선                                                 
+      54 +═══════════════════════════════════════════════════════════════
+         +═══════════ */                                                 
+      55 +.chat-user {                                                   
+      56 +  background: #e8f0fe;                                         
+      57 +  border-radius: 16px 16px 4px 16px;                           
+      58 +  padding: 0.65rem 1rem;                                       
+      59 +  margin: 0.4rem 0 0.4rem auto;                                
+      60 +  text-align: right;                                           
+      61 +  color: #1a1a2e;                                              
+      62 +  width: max-content;                                          
+      63 +  max-width: 80%;                                              
+      64  }
+      65  
+      56 -/* ── 사이드바: 독립 스크롤 ───────────────────────────────────
+         -────────────── */                                              
+      57 -[data-testid="stSidebar"] {                                    
+      58 -  top: 0 !important;                                           
+      66 +.chat-assistant {                                              
+      67 +  background: #f1f3f8;                                         
+      68 +  border-radius: 16px 16px 16px 4px;                           
+      69 +  padding: 0.65rem 1rem;                                       
+      70 +  margin: 0.4rem 0 0.6rem 0;                                   
+      71 +  color: #1a1a2e;                                              
+      72  }
+      60 -[data-testid="stSidebar"] > div:first-child {                  
+      61 -  overflow-y: auto !important;                                 
+      62 -  height: 100vh !important;                                    
+      63 -}                                                              
+      73  
+      65 -/* ── 메인 블록 padding ───────────────────────────────────────
+         -────────────── */                                              
+      66 -[data-testid="stMainBlockContainer"] {                         
+      67 -  padding: 1rem 2rem !important;                               
+      68 -  background: transparent !important;                          
+      69 -  overflow-y: hidden;                                          
+      74 +/* ════════════════════════════════════════════════════════════
+         +══════════════                                                 
+      75 +   퀴즈 카드                                                   
+      76 +═══════════════════════════════════════════════════════════════
+         +═══════════ */                                                 
+      77 +.quiz-card {                                                   
+      78 +  background: #f8f9fc;                                         
+      79 +  border: 1px solid #dde3ec;                                   
+      80 +  border-radius: 12px;                                         
+      81 +  padding: 1rem 1.2rem;                                        
+      82 +  margin-bottom: 1rem;                                         
+      83 +  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);                   
+      84  }
+      85  
+      86 +/* ════════════════════════════════════════════════════════════
+         +══════════════                                                 
+      87 +   채팅 입력창                                                 
+      88 +═══════════════════════════════════════════════════════════════
+         +═══════════ */                                                 
+      89  [data-testid="stBottom"] {
+      90    background: transparent !important;
+      91  }
+     ...
+       97  
+       98  [data-testid="stChatInput"] > div {
+       99    border-radius: 999px !important;
+       83 -  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.15) !important;      
+      100 +  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;       
+      101    border: 1px solid #d0d8e8 !important;
+      102 +  background: #ffffff !important;                             
+      103    overflow: hidden;
+      104  }
+      105  
+      106  [data-testid="stChatInput"] > div:focus-within {
+       89 -  box-shadow: 0 6px 32px rgba(79, 122, 255, 0.22) !important; 
+      107 +  box-shadow: 0 4px 24px rgba(79, 122, 255, 0.2) !important;  
+      108    border-color: #4f7aff !important;
+      109  }
+      110 +                                                              
+      111 +/* ═══════════════════════════════════════════════════════════
+          +═══════════════                                               
+      112 +   사이드바                                                   
+      113 +══════════════════════════════════════════════════════════════
+          +════════════ */                                               
+      114 +[data-testid="stSidebar"] {                                   
+      115 +  top: 0 !important;                                          
+      116 +  background-color: #ffffff !important;                       
+      117 +  border-right: 1px solid #e8ecf4 !important;                 
+      118 +}                                                             
+      119 +                                                              
+      120 +[data-testid="stSidebar"] > div:first-child {                 
+      121 +  overflow-y: auto !important;                                
+      122 +  height: 100vh !important;                                   
+      123 +}                                                             
+      124 +                                                              
+      125 +/* ═══════════════════════════════════════════════════════════
+          +═══════════════                                               
+      126 +   섹션 구분선 & UI 숨기기                                    
+      127 +══════════════════════════════════════════════════════════════
+          +════════════ */                                               
+      128 +hr.section {                                                  
+      129 +  border: none;                                               
+      130 +  border-top: 1px solid #e8ecf4;                              
+      131 +  margin: 1.2rem 0;                                           
+      132 +}                                                             
+      133 +                                                              
+      134 +[data-testid="stAppDeployButton"],                            
+      135 +[data-testid="stHeader"],                                     
+      136 +#MainMenu {                                                   
+      137 +  display: none !important;                                   
+      138 +}                                                             
+
+● 완료됐습니다. 변경 내용:
+
+  레이아웃
+  - 전체 배경: 연한 파란-회색 (#f0f4f9) → NotebookLM 특유의 배경색
+  - Chat/Quiz 패널: 흰색 카드 (border-radius: 20px, box-shadow)
+
+  채팅 입력
+  - st.chat_input(key="chat_input")을 col_chat 내부에 배치 → Chat 패널에만 표시
+  - Quiz 패널에는 입력창 없음
+
+  카드 스타일
+  - border=True 컨테이너가 자동으로 카드로 렌더링
+  - 패널 타이틀에 하단 구분선 추가
+  - 사이드바도 흰색으로 통일
+
+✻ Churned for 3m 22s
+
+❯ 지금 메인 화면에 큰 카드 안에 두 카드가 있고 그 안에 각각 chat카드랑          
+  quiz카드가 있는데 그게 아니라 chat 카드랑 quiz 카드가 화면을 각각 반반씩      
+  채우게 바꿔줘                                                                 
+
+● st.container(border=True) 중첩이 문제입니다. 이걸 제거하고 CSS로 직접 column에
+   카드 스타일을 적용합니다.
+
+  app.py — with st.container(border=True): 래퍼 제거 (들여쓰기 한 단계 줄이기):
+
+● Update(app.py)
+  ⎿  Added 64 lines, removed 66 lines
+      123  # 왼쪽 패널 — CHAT
+      124  # ════════════════════════════════════════════════════════════
+           ══════════════════
+      125  with col_chat:
+      126 -    with st.container(border=True):                           
+      127 -        st.markdown('<p class="panel-title">💬 Chat</p>', unsa
+          -fe_allow_html=True)                                           
+      126 +    st.markdown('<p class="panel-title">💬 Chat</p>', unsafe_a
+          +llow_html=True)                                               
+      127  
+      129 -        # chat_input은 코드 위치에 관계없이 시각적으로 패널 하
+          -단에 고정됨                                                   
+      130 -        user_input = st.chat_input(                           
+      131 -            "👈 문서를 먼저 업로드해주세요." if not st.session
+          -_state.doc_text else                                          
+      132 -            "문서에 대해 무엇이든 물어보세요...",             
+      133 -            disabled=not st.session_state.doc_text,           
+      134 -            key="chat_input",                                 
+      135 -        )                                                     
+      128 +    user_input = st.chat_input(                               
+      129 +        "👈 문서를 먼저 업로드해주세요." if not st.session_sta
+          +te.doc_text else                                              
+      130 +        "문서에 대해 무엇이든 물어보세요...",                 
+      131 +        disabled=not st.session_state.doc_text,               
+      132 +        key="chat_input",                                     
+      133 +    )                                                         
+      134  
+      137 -        if user_input and st.session_state.doc_text:          
+      138 -            if not api_key:                                   
+      139 -                st.error("API Key를 입력해주세요.")           
+      140 -                st.stop()                                     
+      141 -            st.session_state.messages.append({"role": "user", 
+          -"content": user_input})                                       
+      135 +    if user_input and st.session_state.doc_text:              
+      136 +        if not api_key:                                       
+      137 +            st.error("API Key를 입력해주세요.")               
+      138 +            st.stop()                                         
+      139 +        st.session_state.messages.append({"role": "user", "con
+          +tent": user_input})                                           
+      140  
+      143 -        if st.session_state.doc_text:                         
+      144 -            with st.container(height=460, border=False, key="c
+          -hat_container"):                                              
+      145 -                for idx, msg in enumerate(st.session_state.mes
+          -sages):                                                       
+      146 -                    if msg["role"] == "user":                 
+      147 -                        st.markdown(                          
+      148 -                            f'<div class="chat-user">🧑 {msg["
+          -content"]}</div>',                                            
+      149 -                            unsafe_allow_html=True,           
+      150 -                        )                                     
+      151 -                    else:                                     
+      152 -                        st.markdown(                          
+      153 -                            f'<div class="chat-assistant">🤖 {
+          -msg["content"]}</div>',                                       
+      154 -                            unsafe_allow_html=True,           
+      155 -                        )                                     
+      141 +    if st.session_state.doc_text:                             
+      142 +        with st.container(height=460, border=False, key="chat_
+          +container"):                                                  
+      143 +            for idx, msg in enumerate(st.session_state.message
+          +s):                                                           
+      144 +                if msg["role"] == "user":                     
+      145 +                    st.markdown(                              
+      146 +                        f'<div class="chat-user">🧑 {msg["cont
+          +ent"]}</div>',                                                
+      147 +                        unsafe_allow_html=True,               
+      148 +                    )                                         
+      149 +                else:                                         
+      150 +                    st.markdown(                              
+      151 +                        f'<div class="chat-assistant">🤖 {msg[
+          +"content"]}</div>',                                           
+      152 +                        unsafe_allow_html=True,               
+      153 +                    )                                         
+      154  
+      157 -                        current_fb = st.session_state.feedback
+          -.get(idx)                                                     
+      158 -                        col_like, col_dislike, col_spacer = st
+          -.columns([1, 1, 10])                                          
+      159 -                        with col_like:                        
+      160 -                            like_type = "primary" if current_f
+          -b == "like" else "secondary"                                  
+      161 -                            if st.button("👍", key=f"like_{idx
+          -}", type=like_type):                                          
+      162 -                                st.session_state.feedback[idx]
+          - = (                                                          
+      163 -                                    None if current_fb == "lik
+          -e" else "like"                                                
+      164 -                                )                             
+      165 -                                st.rerun()                    
+      166 -                        with col_dislike:                     
+      167 -                            dislike_type = "primary" if curren
+          -t_fb == "dislike" else "secondary"                            
+      168 -                            if st.button("👎", key=f"dislike_{
+          -idx}", type=dislike_type):                                    
+      169 -                                st.session_state.feedback[idx]
+          - = (                                                          
+      170 -                                    None if current_fb == "dis
+          -like" else "dislike"                                          
+      171 -                                )                             
+      172 -                                st.rerun()                    
+      155 +                    current_fb = st.session_state.feedback.get
+          +(idx)                                                         
+      156 +                    col_like, col_dislike, col_spacer = st.col
+          +umns([1, 1, 10])                                              
+      157 +                    with col_like:                            
+      158 +                        like_type = "primary" if current_fb ==
+          + "like" else "secondary"                                      
+      159 +                        if st.button("👍", key=f"like_{idx}", 
+          +type=like_type):                                              
+      160 +                            st.session_state.feedback[idx] = (
+      161 +                                None if current_fb == "like" e
+          +lse "like"                                                    
+      162 +                            )                                 
+      163 +                            st.rerun()                        
+      164 +                    with col_dislike:                         
+      165 +                        dislike_type = "primary" if current_fb
+          + == "dislike" else "secondary"                                
+      166 +                        if st.button("👎", key=f"dislike_{idx}
+          +", type=dislike_type):                                        
+      167 +                            st.session_state.feedback[idx] = (
+      168 +                                None if current_fb == "dislike
+          +" else "dislike"                                              
+      169 +                            )                                 
+      170 +                            st.rerun()                        
+      171  
+      174 -                if st.session_state.messages and st.session_st
+          -ate.messages[-1]["role"] == "user":                           
+      175 -                    answer = st.write_stream(                 
+      176 -                        stream_rag_answer(                    
+      177 -                            query=st.session_state.messages[-1
+          -]["content"],                                                 
+      178 -                            doc_text=st.session_state.doc_text
+          -,                                                             
+      179 -                            model_id=selected_model_id,       
+      180 -                            api_key=api_key,                  
+      181 -                            chat_history=st.session_state.mess
+          -ages[:-1],                                                    
+      182 -                            vector_store=st.session_state.vect
+          -or_store,                                                     
+      183 -                        )                                     
+      172 +            if st.session_state.messages and st.session_state.
+          +messages[-1]["role"] == "user":                               
+      173 +                answer = st.write_stream(                     
+      174 +                    stream_rag_answer(                        
+      175 +                        query=st.session_state.messages[-1]["c
+          +ontent"],                                                     
+      176 +                        doc_text=st.session_state.doc_text,   
+      177 +                        model_id=selected_model_id,           
+      178 +                        api_key=api_key,                      
+      179 +                        chat_history=st.session_state.messages
+          +[:-1],                                                        
+      180 +                        vector_store=st.session_state.vector_s
+          +tore,                                                         
+      181                      )
+      185 -                    st.session_state.messages.append({"role": 
+          -"assistant", "content": answer})                              
+      186 -                    st.rerun()                                
+      187 -                                                              
+      188 -                components.html(                              
+      189 -                    """                                       
+      190 -                    <script>                                  
+      191 -                        const container = window.parent.docume
+          -nt.querySelector('[data-testid="stVerticalBlockBorderWrapper"]
+          -');                                                           
+      192 -                        if (container) container.scrollTop = c
+          -ontainer.scrollHeight;                                        
+      193 -                    </script>                                 
+      194 -                    """,                                      
+      195 -                    height=0,                                 
+      182                  )
+      197 -        else:                                                 
+      198 -            st.markdown('<p class="panel-empty">👈 사이드바에 
+          -서 문서를 먼저 업로드해주세요.</p>', unsafe_allow_html=True)  
+      183 +                st.session_state.messages.append({"role": "ass
+          +istant", "content": answer})                                  
+      184 +                st.rerun()                                    
+      185  
+      186 +            components.html(                                  
+      187 +                """                                           
+      188 +                <script>                                      
+      189 +                    const container = window.parent.document.q
+          +uerySelector('[data-testid="stVerticalBlockBorderWrapper"]'); 
+      190 +                    if (container) container.scrollTop = conta
+          +iner.scrollHeight;                                            
+      191 +                </script>                                     
+      192 +                """,                                          
+      193 +                height=0,                                     
+      194 +            )                                                 
+      195 +    else:                                                     
+      196 +        st.markdown('<p class="panel-empty">👈 사이드바에서 문
+          +서를 먼저 업로드해주세요.</p>', unsafe_allow_html=True)       
+      197  
+      198 +                                                              
+      199  # ════════════════════════════════════════════════════════════
+           ══════════════════
+      200  # 오른쪽 패널 — QUIZ
+      201  # ════════════════════════════════════════════════════════════
+           ══════════════════
+
+● Update(app.py)
+  ⎿  Added 76 lines, removed 77 lines
+      200  # 오른쪽 패널 — QUIZ
+      201  # ════════════════════════════════════════════════════════════
+           ══════════════════
+      202  with col_quiz:
+      203 -    with st.container(border=True):                           
+      204 -        st.markdown('<p class="panel-title">📝 Quiz</p>', unsa
+          -fe_allow_html=True)                                           
+      203 +    st.markdown('<p class="panel-title">📝 Quiz</p>', unsafe_a
+          +llow_html=True)                                               
+      204  
+      206 -        if st.session_state.doc_text:                         
+      207 -            col_gen, _ = st.columns([2, 5])                   
+      208 -            with col_gen:                                     
+      209 -                gen_btn = st.button(                          
+      210 -                    "🎲 퀴즈 생성",                           
+      211 -                    use_container_width=True,                 
+      212 -                    disabled=st.session_state.quiz_submitted, 
+      205 +    if st.session_state.doc_text:                             
+      206 +        col_gen, _ = st.columns([2, 5])                       
+      207 +        with col_gen:                                         
+      208 +            gen_btn = st.button(                              
+      209 +                "🎲 퀴즈 생성",                               
+      210 +                use_container_width=True,                     
+      211 +                disabled=st.session_state.quiz_submitted,     
+      212 +            )                                                 
+      213 +                                                              
+      214 +        if gen_btn:                                           
+      215 +            if not api_key:                                   
+      216 +                st.error("API Key를 입력해주세요.")           
+      217 +                st.stop()                                     
+      218 +            with st.spinner("퀴즈 생성 중..."):               
+      219 +                questions = generate_quiz(                    
+      220 +                    doc_text=st.session_state.doc_text,       
+      221 +                    model_id=selected_model_id,               
+      222 +                    api_key=api_key,                          
+      223                  )
+      224 +            st.session_state.quiz_questions = questions       
+      225 +            st.session_state.quiz_answers = {}                
+      226 +            st.session_state.quiz_submitted = False           
+      227 +            st.rerun()                                        
+      228  
+      215 -            if gen_btn:                                       
+      216 -                if not api_key:                               
+      217 -                    st.error("API Key를 입력해주세요.")       
+      218 -                    st.stop()                                 
+      219 -                with st.spinner("퀴즈 생성 중..."):           
+      220 -                    questions = generate_quiz(                
+      221 -                        doc_text=st.session_state.doc_text,   
+      222 -                        model_id=selected_model_id,           
+      223 -                        api_key=api_key,                      
+      229 +        with st.container(height=500, border=False):          
+      230 +            if st.session_state.quiz_questions:               
+      231 +                with st.form(key="quiz_form"):                
+      232 +                    for q_idx, q in enumerate(st.session_state
+          +.quiz_questions):                                             
+      233 +                        st.markdown(                          
+      234 +                            f'<div class="quiz-card">'        
+      235 +                            f'<b>Q{q_idx + 1}.</b> {q["questio
+          +n"]}'                                                         
+      236 +                            f'</div>',                        
+      237 +                            unsafe_allow_html=True,           
+      238 +                        )                                     
+      239 +                        st.radio(                             
+      240 +                            f"Q{q_idx + 1} 선택",             
+      241 +                            options=q["options"],             
+      242 +                            key=f"quiz_radio_{q_idx}",        
+      243 +                            label_visibility="collapsed",     
+      244 +                        )                                     
+      245 +                                                              
+      246 +                    submit_quiz = st.form_submit_button(      
+      247 +                        "✅ 제출",                            
+      248 +                        disabled=st.session_state.quiz_submitt
+          +ed,                                                           
+      249 +                        use_container_width=False,            
+      250                      )
+      225 -                st.session_state.quiz_questions = questions   
+      226 -                st.session_state.quiz_answers = {}            
+      227 -                st.session_state.quiz_submitted = False       
+      228 -                st.rerun()                                    
+      251  
+      230 -            with st.container(height=500, border=False):      
+      231 -                if st.session_state.quiz_questions:           
+      232 -                    with st.form(key="quiz_form"):            
+      233 -                        for q_idx, q in enumerate(st.session_s
+          -tate.quiz_questions):                                         
+      234 -                            st.markdown(                      
+      235 -                                f'<div class="quiz-card">'    
+      236 -                                f'<b>Q{q_idx + 1}.</b> {q["que
+          -stion"]}'                                                     
+      237 -                                f'</div>',                    
+      238 -                                unsafe_allow_html=True,       
+      239 -                            )                                 
+      240 -                            st.radio(                         
+      241 -                                f"Q{q_idx + 1} 선택",         
+      242 -                                options=q["options"],         
+      243 -                                key=f"quiz_radio_{q_idx}",    
+      244 -                                label_visibility="collapsed", 
+      245 -                            )                                 
+      246 -                                                              
+      247 -                        submit_quiz = st.form_submit_button(  
+      248 -                            "✅ 제출",                        
+      249 -                            disabled=st.session_state.quiz_sub
+          -mitted,                                                       
+      250 -                            use_container_width=False,        
+      252 +                if submit_quiz:                               
+      253 +                    for q_idx in range(len(st.session_state.qu
+          +iz_questions)):                                               
+      254 +                        st.session_state.quiz_answers[q_idx] =
+          + st.session_state.get(                                        
+      255 +                            f"quiz_radio_{q_idx}"             
+      256                          )
+      257 +                    st.session_state.quiz_submitted = True    
+      258 +                    st.rerun()                                
+      259  
+      253 -                    if submit_quiz:                           
+      254 -                        for q_idx in range(len(st.session_stat
+          -e.quiz_questions)):                                           
+      255 -                            st.session_state.quiz_answers[q_id
+          -x] = st.session_state.get(                                    
+      256 -                                f"quiz_radio_{q_idx}"         
+      257 -                            )                                 
+      258 -                        st.session_state.quiz_submitted = True
+      259 -                        st.rerun()                            
+      260 -                                                              
+      261 -                    if st.session_state.quiz_submitted:       
+      260 +                if st.session_state.quiz_submitted:           
+      261 +                    st.markdown("---")                        
+      262 +                    st.subheader("🏆 채점 결과")              
+      263 +                    score = 0                                 
+      264 +                    for q_idx, q in enumerate(st.session_state
+          +.quiz_questions):                                             
+      265 +                        user_ans = st.session_state.quiz_answe
+          +rs.get(q_idx, "")                                             
+      266 +                        correct = q["answer"]                 
+      267 +                        is_correct = user_ans == correct      
+      268 +                        if is_correct:                        
+      269 +                            score += 1                        
+      270 +                        icon = "✅" if is_correct else "❌"   
+      271 +                        st.markdown(                          
+      272 +                            f"**Q{q_idx + 1}.** {q['question']
+          +}  \n"                                                        
+      273 +                            f"{icon} 선택: **{user_ans}**  \n"
+      274 +                            f"정답: **{correct}**"            
+      275 +                        )                                     
+      276                          st.markdown("---")
+      263 -                        st.subheader("🏆 채점 결과")          
+      264 -                        score = 0                             
+      265 -                        for q_idx, q in enumerate(st.session_s
+          -tate.quiz_questions):                                         
+      266 -                            user_ans = st.session_state.quiz_a
+          -nswers.get(q_idx, "")                                         
+      267 -                            correct = q["answer"]             
+      268 -                            is_correct = user_ans == correct  
+      269 -                            if is_correct:                    
+      270 -                                score += 1                    
+      271 -                            icon = "✅" if is_correct else "❌
+          -"                                                             
+      272 -                            st.markdown(                      
+      273 -                                f"**Q{q_idx + 1}.** {q['questi
+          -on']}  \n"                                                    
+      274 -                                f"{icon} 선택: **{user_ans}** 
+          - \n"                                                          
+      275 -                                f"정답: **{correct}**"        
+      276 -                            )                                 
+      277 -                            st.markdown("---")                
+      277  
+      279 -                        total = len(st.session_state.quiz_ques
+          -tions)                                                        
+      280 -                        pct = int(score / total * 100) if tota
+          -l else 0                                                      
+      281 -                        st.metric("점수", f"{score} / {total}"
+          -, f"{pct}%")                                                  
+      278 +                    total = len(st.session_state.quiz_question
+          +s)                                                            
+      279 +                    pct = int(score / total * 100) if total el
+          +se 0                                                          
+      280 +                    st.metric("점수", f"{score} / {total}", f"
+          +{pct}%")                                                      
+      281  
+      283 -                        if st.button("🔄 다시 풀기"):         
+      284 -                            st.session_state.quiz_questions = 
+          -[]                                                            
+      285 -                            st.session_state.quiz_answers = {}
+      286 -                            st.session_state.quiz_submitted = 
+          -False                                                         
+      287 -                            st.rerun()                        
+      288 -        else:                                                 
+      289 -            st.markdown('<p class="panel-empty">👈 사이드바에 
+          -서 문서를 먼저 업로드해주세요.</p>', unsafe_allow_html=True)  
+      282 +                    if st.button("🔄 다시 풀기"):             
+      283 +                        st.session_state.quiz_questions = []  
+      284 +                        st.session_state.quiz_answers = {}    
+      285 +                        st.session_state.quiz_submitted = Fals
+          +e                                                             
+      286 +                        st.rerun()                            
+      287 +    else:                                                     
+      288 +        st.markdown('<p class="panel-empty">👈 사이드바에서 문
+          +서를 먼저 업로드해주세요.</p>', unsafe_allow_html=True)       
+      289  
+      290  
+
+● 이제 CSS에서 stVerticalBlockBorderWrapper 카드 스타일을 제거하고, 메인 두
+  컬럼에 직접 카드 스타일을 적용합니다.
+
+● Update(style.css)
+  ⎿  Added 3 lines, removed 9 lines
+      15  }
+      16  
+      17  /* ════════════════════════════════════════════════════════════
+          ══════════════
+      18 -   패널 카드 (border=True 컨테이너)                            
+      18 +   메인 두 패널 카드 — st.columns(2)의 직계 자식 stColumn만 대 
+         +상                                                             
+      19  ═══════════════════════════════════════════════════════════════
+          ═══════════ */
+      20 -[data-testid="stVerticalBlockBorderWrapper"] {                 
+      20 +[data-testid="stMainBlockContainer"] > [data-testid="stVertical
+         +Block"] > [data-testid="stHorizontalBlock"] > [data-testid="stC
+         +olumn"] {                                                      
+      21    background: #ffffff !important;
+      22    border-radius: 20px !important;
+      23    border: 1px solid #dde3ec !important;
+      24    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07) !important;
+      25 +  padding: 1.4rem 1.6rem 1.2rem !important;                    
+      26    overflow: hidden;
+      26 -  padding: 0 !important;                                       
+      27 -  height: 100%;                                                
+      27  }
+      28  
+      30 -/* 카드 안쪽 여백 */                                           
+      31 -[data-testid="stVerticalBlockBorderWrapper"] > div {           
+      32 -  padding: 1.4rem 1.6rem 1rem !important;                      
+      33 -}                                                              
+      34 -                                                               
+      29  /* ── 패널 타이틀 ─────────────────────────────────────────────
+          ────────────── */
+      30  p.panel-title {
+      31    font-size: 1.1rem;
+
+● 완료됐습니다. 변경 내용:
+
+  - st.container(border=True) 래퍼를 양쪽 패널에서 모두 제거해 불필요한 중첩
+  제거
+  - CSS를 stMainBlockContainer > stVerticalBlock > stHorizontalBlock > stColumn
+  직계 자식 선택자로 교체 → 메인 두 컬럼에만 정확히 카드 스타일 적용 (내부
+  like/dislike 등 중첩 컬럼에는 영향 없음)
+
+✻ Baked for 2m 52s
+
+❯ 그냥 방금적용한 스타일 card라는 css클래스 만들어서 st.columns에만 따로        
+  적용시켜줘                                                                    
+
+● Streamlit은 컬럼에 클래스를 직접 추가할 수 없어서, JS로 렌더링 후에 card
+  클래스를 붙이는 방식으로 구현합니다.
+
+  style.css — 복잡한 선택자 제거하고 .card 클래스 추가:
+
+● Update(style.css)
+  ⎿  Added 2 lines, removed 4 lines
+      15  }
+      16  
+      17  /* ════════════════════════════════════════════════════════════
+          ══════════════
+      18 -   메인 두 패널 카드 — st.columns(2)의 직계 자식 stColumn만 대 
+         -상                                                             
+      18 +   패널 카드                                                   
+      19  ═══════════════════════════════════════════════════════════════
+          ═══════════ */
+      20 -[data-testid="stMainBlockContainer"]                           
+      21 -  > [data-testid="stHorizontalBlock"]                          
+      22 -  > [data-testid="stColumn"] {                                 
+      20 +.card {                                                        
+      21    background: #ffffff !important;
+      22    border-radius: 20px !important;
+      23    border: 1px solid #dde3ec !important;
+
+● app.py — 컬럼 렌더링 직후 JS로 card 클래스 주입:
+
+● Update(app.py)
+  ⎿  Added 18 lines
+      118  
+      119  col_chat, col_quiz = st.columns(2, gap="medium")
+      120  
+      121 +# st.columns에 .card 클래스 주입 (Streamlit은 컬럼에 클래스 직
+          +접 추가 불가)                                                 
+      122 +components.html(                                              
+      123 +    """                                                       
+      124 +    <script>                                                  
+      125 +        function applyCardClass() {                           
+      126 +            const block = window.parent.document.querySelector
+          +(                                                             
+      127 +                '[data-testid="stHorizontalBlock"]'           
+      128 +            );                                                
+      129 +            if (!block) { setTimeout(applyCardClass, 50); retu
+          +rn; }                                                         
+      130 +            block.querySelectorAll(':scope > [data-testid="stC
+          +olumn"]')                                                     
+      131 +                 .forEach(col => col.classList.add('card'));  
+      132 +        }                                                     
+      133 +        applyCardClass();                                     
+      134 +    </script>                                                 
+      135 +    """,                                                      
+      136 +    height=0,                                                 
+      137 +)                                                             
+      138  
+      139 +                                                              
+      140  # ════════════════════════════════════════════════════════════
+           ══════════════════
+      141  # 왼쪽 패널 — CHAT
+      142  # ════════════════════════════════════════════════════════════
+           ══════════════════
+
+● 완료됐습니다.
+
+  - style.css에 .card 클래스 정의
+  - JS가 stHorizontalBlock의 직계 자식 stColumn 두 개를 찾아 .card 클래스를 붙임
+  - :scope > 선택자로 중첩된 내부 컬럼(like/dislike 등)에는 적용되지 않음
+
+✻ Baked for 31s
+
+❯ chat이랑 quiz 카드 height 화면 끝까지 늘려줘                                  
+  Read 1 file (ctrl+o to expand)
+
+● Update(style.css)
+  ⎿  Added 26 lines
+       3  ═══════════════════════════════════════════════════════════════
+          ═══════════ */
+       4  [data-testid="stApp"] {
+       5    background-color: #f0f4f9 !important;
+       6 +  height: 100vh;                                               
+       7  }
+       8  
+       9  [data-testid="stMain"] {
+      10    background-color: #f0f4f9 !important;
+      11 +  height: 100%;                                                
+      12  }
+      13  
+      14  [data-testid="stMainBlockContainer"] {
+      15    padding: 1.2rem 1.5rem 1rem !important;
+      16    background: transparent !important;
+      17 +  height: 100%;                                                
+      18 +  box-sizing: border-box;                                      
+      19  }
+      20  
+      21 +/* 메인 세로 블록 → 가로 블록(컬럼 행) 전체 높이 채우기 */     
+      22 +[data-testid="stMainBlockContainer"] > [data-testid="stVertical
+         +Block"] {                                                      
+      23 +  height: 100%;                                                
+      24 +  display: flex;                                               
+      25 +  flex-direction: column;                                      
+      26 +}                                                              
+      27 +                                                               
+      28 +[data-testid="stMainBlockContainer"] > [data-testid="stVertical
+         +Block"] > [data-testid="stHorizontalBlock"] {                  
+      29 +  flex: 1;                                                     
+      30 +  min-height: 0;                                               
+      31 +  align-items: stretch !important;                             
+      32 +}                                                              
+      33 +                                                               
+      34 +/* 각 stColumn도 높이 100% 채우기 */                           
+      35 +[data-testid="stHorizontalBlock"] > [data-testid="stColumn"] { 
+      36 +  height: 100%;                                                
+      37 +}                                                              
+      38 +                                                               
+      39 +[data-testid="stHorizontalBlock"] > [data-testid="stColumn"] > 
+         +[data-testid="stVerticalBlock"] {                              
+      40 +  height: 100%;                                                
+      41 +}                                                              
+      42 +                                                               
+      43  /* ════════════════════════════════════════════════════════════
+          ══════════════
+      44     패널 카드
+      45  ═══════════════════════════════════════════════════════════════
+          ═══════════ */
+
+● Update(style.css)
+  ⎿  Added 2 lines
+      50    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07) !important;
+      51    padding: 1.4rem 1.6rem 1.2rem !important;
+      52    overflow: hidden;
+      53 +  height: 100% !important;                                     
+      54 +  box-sizing: border-box;                                      
+      55  }
+      56  
+      57  /* ── 패널 타이틀 ─────────────────────────────────────────────
+          ────────────── */
+
+● 완료됐습니다. 변경 내용:
+
+  - stApp → stMain → stMainBlockContainer → stVerticalBlock 순서로 height: 100%
+  체인 연결
+  - 컬럼 행(stHorizontalBlock)에 flex: 1을 줘서 남은 세로 공간을 모두 채우게
+  설정
+  - align-items: stretch로 두 카드 높이를 동일하게 맞춤
+  - .card에도 height: 100% 추가
+
+❯ 채팅이나 퀴즈가 없으면 100%로 안늘어나는데?                                   
+
+● height: 100%는 부모에 명시적 높이가 있어야 동작합니다. flex: 1로 체인을 바꿔야
+   내용 유무와 무관하게 늘어납니다.
+
+● Update(style.css)
+  ⎿  Added 16 lines, removed 8 lines
+       3  ═══════════════════════════════════════════════════════════════
+          ═══════════ */
+       4  [data-testid="stApp"] {
+       5    background-color: #f0f4f9 !important;
+       6 -  height: 100vh;                                               
+       6  }
+       7  
+       8  [data-testid="stMain"] {
+       9    background-color: #f0f4f9 !important;
+      11 -  height: 100%;                                                
+      10 +  display: flex;                                               
+      11 +  flex-direction: column;                                      
+      12 +  min-height: 100vh;                                           
+      13  }
+      14  
+      15  [data-testid="stMainBlockContainer"] {
+      16    padding: 1.2rem 1.5rem 1rem !important;
+      17    background: transparent !important;
+      17 -  height: 100%;                                                
+      18 +  flex: 1;                                                     
+      19 +  display: flex;                                               
+      20 +  flex-direction: column;                                      
+      21    box-sizing: border-box;
+      22  }
+      23  
+      21 -/* 메인 세로 블록 → 가로 블록(컬럼 행) 전체 높이 채우기 */     
+      24 +/* stVerticalBlock → 세로로 늘어나기 */                        
+      25  [data-testid="stMainBlockContainer"] > [data-testid="stVertical
+          Block"] {
+      23 -  height: 100%;                                                
+      26 +  flex: 1;                                                     
+      27    display: flex;
+      28    flex-direction: column;
+      29 +  min-height: 0;                                               
+      30  }
+      31  
+      32 +/* 컬럼 행: 남은 높이 모두 차지 + stretch로 두 카드 높이 동일하
+         +게 */                                                          
+      33  [data-testid="stMainBlockContainer"] > [data-testid="stVertical
+          Block"] > [data-testid="stHorizontalBlock"] {
+      34    flex: 1;
+      35    min-height: 0;
+      36    align-items: stretch !important;
+      37  }
+      38  
+      34 -/* 각 stColumn도 높이 100% 채우기 */                           
+      39 +/* 각 stColumn + 내부 stVerticalBlock flex 체인 */             
+      40  [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
+      36 -  height: 100%;                                                
+      41 +  display: flex !important;                                    
+      42 +  flex-direction: column;                                      
+      43 +  min-height: 0;                                               
+      44  }
+      45  
+      46  [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] > 
+          [data-testid="stVerticalBlock"] {
+      40 -  height: 100%;                                                
+      47 +  flex: 1;                                                     
+      48 +  min-height: 0;                                               
+      49  }
+      50  
+      51  /* ════════════════════════════════════════════════════════════
+          ══════════════
+
+● Update(style.css)
+  ⎿  Added 2 lines, removed 1 line
+      58    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07) !important;
+      59    padding: 1.4rem 1.6rem 1.2rem !important;
+      60    overflow: hidden;
+      61 -  height: 100% !important;                                     
+      61 +  flex: 1 !important;                                          
+      62 +  min-height: 0;                                               
+      63    box-sizing: border-box;
+      64  }
+      65  
+
+● 핵심 변경: height: 100% → flex: 1 체인으로 전환했습니다.
+
+  - height: 100%는 부모에 명시적 높이가 없으면 auto로 계산돼 내용 크기만큼만
+  늘어남
+  - flex: 1은 부모의 남은 공간을 채우므로 내용이 없어도 항상 늘어남
+  - stMain → stMainBlockContainer → stVerticalBlock → stHorizontalBlock →
+  stColumn → .card 전 체인을 flex로 연결
+
+✻ Brewed for 41s
+
+❯ 파일 존재할때만 카드 height100%로 되는데 파일 없을때도 카드 height 100%로     
+  바꿔줘 그리고 chat 카드의 채팅입력란은 chat 카드의 맨 아래로 고정시켜줘       
+
+● 두 가지를 수정합니다. 카드 height는 min-height: calc(100vh - Xrem)으로 강제
+  적용하고, 채팅 입력란은 JS로 왼쪽 카드 하단에 고정합니다.
+
+● Update(style.css)
+  ⎿  Added 3 lines, removed 3 lines
+      56    border-radius: 20px !important;
+      57    border: 1px solid #dde3ec !important;
+      58    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07) !important;
+      59 -  padding: 1.4rem 1.6rem 1.2rem !important;                    
+      59 +  padding: 1.4rem 1.6rem 5rem !important; /* 하단 padding: 채팅
+         + 입력란 공간 확보 */                                           
+      60    overflow: hidden;
+      61    flex: 1 !important;
+      62 -  min-height: 0;                                               
+      63 -  box-sizing: border-box;                                      
+      62 +  min-height: calc(100vh - 3.4rem) !important; /* 파일 없을 때 
+         +도 뷰포트 가득 채우기 */                                       
+      63 +  box-sizing: border-box !important;                           
+      64  }
+      65  
+      66  /* ── 패널 타이틀 ─────────────────────────────────────────────
+          ────────────── */
+
+● 이제 app.py의 JS 블록에서 채팅 입력란을 카드 하단으로 고정하는 로직을
+  추가합니다.
+
+● Update(app.py)
+  ⎿  Added 31 lines, removed 9 lines
+      118  
+      119  col_chat, col_quiz = st.columns(2, gap="medium")
+      120  
+      121 -# st.columns에 .card 클래스 주입 (Streamlit은 컬럼에 클래스 직
+          -접 추가 불가)                                                 
+      121 +# st.columns에 .card 클래스 주입 + 채팅 입력란을 왼쪽 카드 하 
+          +단에 고정                                                     
+      122  components.html(
+      123      """
+      124      <script>
+      125 -        function applyCardClass() {                           
+      126 -            const block = window.parent.document.querySelector
+          -(                                                             
+      127 -                '[data-testid="stHorizontalBlock"]'           
+      128 -            );                                                
+      129 -            if (!block) { setTimeout(applyCardClass, 50); retu
+          -rn; }                                                         
+      130 -            block.querySelectorAll(':scope > [data-testid="stC
+          -olumn"]')                                                     
+      131 -                 .forEach(col => col.classList.add('card'));  
+      125 +        function applyLayout() {                              
+      126 +            const doc = window.parent.document;               
+      127 +            const block = doc.querySelector('[data-testid="stH
+          +orizontalBlock"]');                                           
+      128 +            if (!block) { setTimeout(applyLayout, 50); return;
+          + }                                                            
+      129 +                                                              
+      130 +            // 두 컬럼에 .card 클래스 추가                    
+      131 +            const cols = block.querySelectorAll(':scope > [dat
+          +a-testid="stColumn"]');                                       
+      132 +            cols.forEach(col => col.classList.add('card'));   
+      133 +                                                              
+      134 +            // 채팅 입력란을 왼쪽 카드 하단에 고정            
+      135 +            const stBottom = doc.querySelector('[data-testid="
+          +stBottom"]');                                                 
+      136 +            const leftCard = cols[0];                         
+      137 +            if (!stBottom || !leftCard) return;               
+      138 +                                                              
+      139 +            function updateChatInputPos() {                   
+      140 +                const rect = leftCard.getBoundingClientRect();
+      141 +                stBottom.style.cssText = `                    
+      142 +                    position: fixed !important;               
+      143 +                    left: ${rect.left + 20}px !important;     
+      144 +                    width: ${rect.width - 40}px !important;   
+      145 +                    bottom: 1rem !important;                  
+      146 +                    background: transparent !important;       
+      147 +                    padding: 0 !important;                    
+      148 +                    z-index: 999;                             
+      149 +                `;                                            
+      150 +            }                                                 
+      151 +                                                              
+      152 +            updateChatInputPos();                             
+      153 +            window.parent.addEventListener('resize', updateCha
+          +tInputPos);                                                   
+      154          }
+      133 -        applyCardClass();                                     
+      155 +        applyLayout();                                        
+      156      </script>
+      157      """,
+      158      height=0,
+
+● 완료됐습니다. 변경 내용:
+
+  - 카드 height: min-height: calc(100vh - 3.4rem) — 파일 유무와 무관하게 항상
+  뷰포트 가득 채움
+  - 카드 하단 padding: 5rem — 채팅 입력란 뒤에 콘텐츠가 가려지지 않도록 공간
+  확보
+  - 채팅 입력란 위치: JS로 왼쪽 카드의 getBoundingClientRect()를 읽어 position: 
+  fixed로 카드 하단에 정확히 고정. 창 크기 변경 시에도 자동 재계산
+
+✻ Cogitated for 1m 51s
+
+❯ 왜 파일이 존재하면 카드 height가 커지는거야? 카드 height는 파일 여부와        
+  상관없이 무조건 고정시켜줘                                                    
+
+● min-height가 아닌 height로 바꾸면 콘텐츠가 많아도 카드가 커지지 않습니다.
+
+● Update(style.css)
+  ⎿  Added 1 line, removed 1 line
+      59    padding: 1.4rem 1.6rem 5rem !important; /* 하단 padding: 채팅
+           입력란 공간 확보 */
+      60    overflow: hidden;
+      61    flex: 1 !important;
+      62 -  min-height: calc(100vh - 3.4rem) !important; /* 파일 없을 때 
+         -도 뷰포트 가득 채우기 */                                       
+      62 +  height: calc(100vh - 3.4rem) !important; /* 파일 여부 무관하 
+         +게 고정 높이 */                                                
+      63    box-sizing: border-box !important;
+      64  }
+      65  
+
+● min-height → height로 변경했습니다. 이제 파일 유무와 상관없이 카드 높이가
+  calc(100vh - 3.4rem)으로 고정됩니다. 내부 콘텐츠가 넘쳐도 overflow: hidden으로
+   잘립니다.
+
+❯ data-testid="stSidebarHeader" 이 div 안에 글자를 넣으려면 어떡해?             
+
+● 두 가지 방법이 있습니다.
+
+  방법 1 — CSS pseudo-element (텍스트만 가능)
+
+  style.css에 추가:
+  [data-testid="stSidebarHeader"]::after {
+    content: "OmniDocs";
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1a1a2e;
+  }
+
+  ---
+  방법 2 — JS로 직접 삽입 (HTML/이미지 등 자유롭게)
+
+  app.py의 기존 components.html 블록 script 안에 추가:
+
+  const sidebarHeader = doc.querySelector('[data-testid="stSidebarHeader"]');
+  if (sidebarHeader && !sidebarHeader.querySelector('.sidebar-title')) {
+      const title = doc.createElement('span');
+      title.className = 'sidebar-title';
+      title.textContent = 'OmniDocs';
+      title.style.cssText = 'font-size:1.1rem; font-weight:700; color:#1a1a2e;';
+      sidebarHeader.appendChild(title);
+  }
+
+  ---
+  어떤 내용을 넣으실 건가요? 그에 맞게 바로 적용해 드릴게요.
