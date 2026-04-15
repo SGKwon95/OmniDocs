@@ -1,3 +1,4 @@
+import html
 import os
 import streamlit as st
 import streamlit.components.v1 as components
@@ -43,7 +44,7 @@ for k, v in defaults.items():
 # ══════════════════════════════════════════════════════════════════════════════
 st.logo(
     "logo.png",
-    icon_image="logo.png" # (선택 사항) 사이드바가 접혔을 때 보여줄 작은 아이콘
+    size='large',
 )
 
 
@@ -60,8 +61,8 @@ with st.sidebar:
         "Claude 3 Haiku (유료)":     ("claude-haiku-4-5-20251001",   os.getenv("ANTHROPIC_API_KEY")),
         "GPT-4o (유료)":             ("gpt-4o",                      os.getenv("OPENAI_API_KEY")),
         "GPT-4o Mini (유료)":        ("gpt-4o-mini",                 os.getenv("OPENAI_API_KEY")),
-        "Gemini 1.5 Pro (무료)":     ("gemini-1.5-pro",              os.getenv("GOOGLE_API_KEY")),
-        "Gemini 1.5 Flash (무료)":   ("gemini-1.5-flash",            os.getenv("GOOGLE_API_KEY")),
+        "Gemini 2.0 Flash (무료)":    ("gemini-2.0-flash",            os.getenv("GOOGLE_API_KEY")),
+        "Gemini 1.5 Flash (무료)":   ("gemini-1.5-flash-002",        os.getenv("GOOGLE_API_KEY")),
         "Groq Llama 3 70B (무료)":   ("llama3-70b-8192",             os.getenv("GROQ_API_KEY")),
         "Groq Mixtral (무료)":       ("mixtral-8x7b-32768",          os.getenv("GROQ_API_KEY")),
     }
@@ -77,17 +78,17 @@ with st.sidebar:
 
     if st.session_state.doc_name:
         # 파일이 로드된 상태: 업로더 숨기고 파일명 + X 버튼 표시
-        col_name, col_x = st.columns([9, 1])
-        with col_name:
-            st.info(f"📄 **{st.session_state.doc_name}**")
-        with col_x:
-            if st.button("✕", key="clear_file"):
-                for k, v in defaults.items():
-                    st.session_state[k] = v
-                st.rerun()
+        safe_name = html.escape(st.session_state.doc_name)
+        st.markdown(
+            f'<div class="doc-name-bar">📄 <strong>{safe_name}</strong></div>',
+            unsafe_allow_html=True,
+        )
+        if st.button("✕", key="clear_file"):
+            for k, v in defaults.items():
+                st.session_state[k] = v
+            st.rerun()
         chars = len(st.session_state.doc_text or "")
         chunk_count = get_chunk_count(st.session_state.vector_store) if st.session_state.vector_store else 0
-        st.caption(f"추출 문자 수: {chars:,}자 · 청크 수: {chunk_count}개")
     else:
         # 파일 없음: 업로더 표시
         uploaded_file = st.file_uploader(
@@ -121,7 +122,7 @@ with st.sidebar:
 
 col_chat, col_quiz = st.columns(2, gap="medium")
 
-# st.columns에 .card 클래스 주입 + 채팅 입력란을 왼쪽 카드 하단에 고정
+# st.columns에 .card 클래스 주입 + 채팅 입력란을 왼쪽 카드의 자식으로 이동
 components.html(
     """
     <script>
@@ -134,26 +135,10 @@ components.html(
             const cols = block.querySelectorAll(':scope > [data-testid="stColumn"]');
             cols.forEach(col => col.classList.add('card'));
 
-            // 채팅 입력란을 왼쪽 카드 하단에 고정
             const stBottom = doc.querySelector('[data-testid="stBottom"]');
             const leftCard = cols[0];
-            if (!stBottom || !leftCard) return;
+            if (!stBottom || !leftCard) { setTimeout(applyLayout, 50); return; }
 
-            function updateChatInputPos() {
-                const rect = leftCard.getBoundingClientRect();
-                stBottom.style.cssText = `
-                    position: fixed !important;
-                    left: ${rect.left + 20}px !important;
-                    width: ${rect.width - 40}px !important;
-                    bottom: 1rem !important;
-                    background: transparent !important;
-                    padding: 0 !important;
-                    z-index: 999;
-                `;
-            }
-
-            updateChatInputPos();
-            window.parent.addEventListener('resize', updateChatInputPos);
         }
         applyLayout();
     </script>
@@ -168,8 +153,11 @@ components.html(
 with col_chat:
     st.markdown('<p class="panel-title">💬 Chat</p>', unsafe_allow_html=True)
 
+    if not st.session_state.doc_text:
+        st.container(height=500, border=False)
+
     user_input = st.chat_input(
-        "👈 문서를 먼저 업로드해주세요." if not st.session_state.doc_text else
+        "문서를 먼저 업로드해주세요." if not st.session_state.doc_text else
         "문서에 대해 무엇이든 물어보세요...",
         disabled=not st.session_state.doc_text,
         key="chat_input",
@@ -235,8 +223,6 @@ with col_chat:
                 """,
                 height=0,
             )
-    else:
-        st.markdown('<p class="panel-empty">👈 사이드바에서 문서를 먼저 업로드해주세요.</p>', unsafe_allow_html=True)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -327,7 +313,5 @@ with col_quiz:
                         st.session_state.quiz_answers = {}
                         st.session_state.quiz_submitted = False
                         st.rerun()
-    else:
-        st.markdown('<p class="panel-empty">👈 사이드바에서 문서를 먼저 업로드해주세요.</p>', unsafe_allow_html=True)
 
 
