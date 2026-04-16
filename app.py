@@ -153,22 +153,6 @@ components.html(
 with col_chat:
     st.markdown('<p class="panel-title">💬 Chat</p>', unsafe_allow_html=True)
 
-    if not st.session_state.doc_text:
-        st.container(height=500, border=False)
-
-    user_input = st.chat_input(
-        "문서를 먼저 업로드해주세요." if not st.session_state.doc_text else
-        "문서에 대해 무엇이든 물어보세요...",
-        disabled=not st.session_state.doc_text,
-        key="chat_input",
-    )
-
-    if user_input and st.session_state.doc_text:
-        if not api_key:
-            st.error("API Key를 입력해주세요.")
-            st.stop()
-        st.session_state.messages.append({"role": "user", "content": user_input})
-
     if st.session_state.doc_text:
         with st.container(height=460, border=False, key="chat_container"):
             for idx, msg in enumerate(st.session_state.messages):
@@ -222,12 +206,39 @@ with col_chat:
             components.html(
                 """
                 <script>
-                    const container = window.parent.document.querySelector('[data-testid="stVerticalBlockBorderWrapper"]');
-                    if (container) container.scrollTop = container.scrollHeight;
+                    const doc = window.parent.document;
+                    const candidates = doc.querySelectorAll('[data-testid="stVerticalBlockBorderWrapper"]');
+                    let chatContainer = null;
+                    for (const el of candidates) {
+                        if (el.scrollHeight > el.clientHeight) {
+                            chatContainer = el;
+                        }
+                    }
+                    if (chatContainer) {
+                        chatContainer.scrollTop = chatContainer.scrollHeight;
+                        const observer = new MutationObserver(() => {
+                            chatContainer.scrollTop = chatContainer.scrollHeight;
+                        });
+                        observer.observe(chatContainer, { childList: true, subtree: true });
+                    }
                 </script>
                 """,
                 height=0,
             )
+
+    user_input = st.chat_input(
+        "문서를 먼저 업로드해주세요." if not st.session_state.doc_text else
+        "문서에 대해 무엇이든 물어보세요...",
+        disabled=not st.session_state.doc_text,
+        key="chat_input",
+    )
+
+    if user_input and st.session_state.doc_text:
+        if not api_key:
+            st.error("API Key를 입력해주세요.")
+            st.stop()
+        st.session_state.messages.append({"role": "user", "content": user_input})
+        st.rerun()
 
 
 # ══════════════════════════════════════════════════════════════════════════════
