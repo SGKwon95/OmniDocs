@@ -201,17 +201,22 @@ with col_chat:
                             st.rerun()
 
             if st.session_state.messages and st.session_state.messages[-1]["role"] == "user":
-                answer = st.write_stream(
-                    stream_rag_answer(
-                        query=st.session_state.messages[-1]["content"],
-                        doc_text=st.session_state.doc_text,
-                        model_id=selected_model_id,
-                        api_key=api_key,
-                        chat_history=st.session_state.messages[:-1],
-                        vector_store=st.session_state.vector_store,
+                answer_placeholder = st.empty()
+                full_answer = ""
+                for chunk in stream_rag_answer(
+                    query=st.session_state.messages[-1]["content"],
+                    doc_text=st.session_state.doc_text,
+                    model_id=selected_model_id,
+                    api_key=api_key,
+                    chat_history=st.session_state.messages[:-1],
+                    vector_store=st.session_state.vector_store,
+                ):
+                    full_answer += chunk
+                    answer_placeholder.markdown(
+                        f'<div class="chat-assistant">🤖 {full_answer}</div>',
+                        unsafe_allow_html=True,
                     )
-                )
-                st.session_state.messages.append({"role": "assistant", "content": answer})
+                st.session_state.messages.append({"role": "assistant", "content": full_answer})
                 st.rerun()
 
             components.html(
