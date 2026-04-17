@@ -57,14 +57,14 @@ with st.sidebar:
     st.subheader("🤖 모델 선택")
 
     MODELS = {
-        "Claude 3.5 Sonnet (유료)":  ("claude-sonnet-4-5",          os.getenv("ANTHROPIC_API_KEY")),
-        "Claude 3 Haiku (유료)":     ("claude-haiku-4-5-20251001",   os.getenv("ANTHROPIC_API_KEY")),
-        "GPT-4o (유료)":             ("gpt-4o",                      os.getenv("OPENAI_API_KEY")),
-        "GPT-4o Mini (유료)":        ("gpt-4o-mini",                 os.getenv("OPENAI_API_KEY")),
-        "Gemini 2.0 Flash (무료)":    ("gemini-2.0-flash",            os.getenv("GOOGLE_API_KEY")),
-        "Gemini 1.5 Flash (무료)":   ("gemini-1.5-flash-002",        os.getenv("GOOGLE_API_KEY")),
-        "Groq Llama 3 70B (무료)":   ("llama3-70b-8192",             os.getenv("GROQ_API_KEY")),
-        "Groq Mixtral (무료)":       ("mixtral-8x7b-32768",          os.getenv("GROQ_API_KEY")),
+        "Claude 3.5 Sonnet 💎":  ("claude-sonnet-4-5",          os.getenv("ANTHROPIC_API_KEY")),
+        "Claude 3 Haiku 💎":     ("claude-haiku-4-5-20251001",   os.getenv("ANTHROPIC_API_KEY")),
+        "GPT-4o 💎":             ("gpt-4o",                      os.getenv("OPENAI_API_KEY")),
+        "GPT-4o Mini 💎":        ("gpt-4o-mini",                 os.getenv("OPENAI_API_KEY")),
+        # "Gemini 2.0 Flash (무료)":    ("gemini-2.0-flash",            os.getenv("GOOGLE_API_KEY")),
+        # "Gemini 1.5 Flash (무료)":   ("gemini-1.5-flash-002",        os.getenv("GOOGLE_API_KEY")),
+        # "Groq Llama 3 70B (무료)":   ("llama3-70b-8192",             os.getenv("GROQ_API_KEY")),
+        # "Groq Mixtral (무료)":       ("mixtral-8x7b-32768",          os.getenv("GROQ_API_KEY")),
     }
 
     model_display = st.selectbox("모델", list(MODELS.keys()), key="model_display")
@@ -108,7 +108,7 @@ with st.sidebar:
                 st.session_state.quiz_answers = {}
                 st.session_state.quiz_submitted = False
                 st.session_state.vector_store = None
-            with st.spinner("벡터 DB 구축 중... (최초 실행 시 모델 다운로드로 수분 소요)"):
+            with st.spinner("벡터 DB 구축 중..."):
                 st.session_state.vector_store = build_vector_store(
                     text, source_name=uploaded_file.name
                 )
