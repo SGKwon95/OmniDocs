@@ -1,7 +1,14 @@
+import html
+import os
 import streamlit as st
+import streamlit.components.v1 as components
+from dotenv import load_dotenv
+from PIL import Image
+
+load_dotenv()
 from pathlib import Path
 from utils import extract_text_from_file
-from llm_logic import get_rag_answer, generate_quiz
+from llm_logic import get_rag_answer, stream_rag_answer, generate_quiz, detect_provider
 from vectorstore import build_vector_store, get_chunk_count
 
 # ── 페이지 기본 설정 ────────────────────────────────────────────────────────────
@@ -33,99 +40,121 @@ for k, v in defaults.items():
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+# LOGO
+# ══════════════════════════════════════════════════════════════════════════════
+st.logo(
+    "logo.png",
+    size='large',
+)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # SIDEBAR
 # ══════════════════════════════════════════════════════════════════════════════
 with st.sidebar:
+    
     # ── 1. 모델 선택 ────────────────────────────────────────────────────────────
     st.subheader("🤖 모델 선택")
 
-    PROVIDER_MODELS = {
-        "💰 유료 모델": {
-            "Claude 3.5 Sonnet": "claude-sonnet-4-5",
-            "Claude 3 Haiku": "claude-haiku-4-5-20251001",
-            "GPT-4o": "gpt-4o",
-            "GPT-4o Mini": "gpt-4o-mini",
-        },
-        "🆓 무료 모델": {
-            "Gemini 1.5 Pro": "gemini-1.5-pro",
-            "Gemini 1.5 Flash": "gemini-1.5-flash",
-            "Groq Llama 3 (70B)": "llama3-70b-8192",
-            "Groq Mixtral": "mixtral-8x7b-32768",
-        },
+    MODELS = {
+        "Claude 3.5 Sonnet 💎":  ("claude-sonnet-4-5",          os.getenv("ANTHROPIC_API_KEY")),
+        "Claude 3 Haiku 💎":     ("claude-haiku-4-5-20251001",   os.getenv("ANTHROPIC_API_KEY")),
+        "GPT-4o 💎":             ("gpt-4o",                      os.getenv("OPENAI_API_KEY")),
+        "GPT-4o Mini 💎":        ("gpt-4o-mini",                 os.getenv("OPENAI_API_KEY")),
+        # "Gemini 2.0 Flash (무료)":    ("gemini-2.0-flash",            os.getenv("GOOGLE_API_KEY")),
+        # "Gemini 1.5 Flash (무료)":   ("gemini-1.5-flash-002",        os.getenv("GOOGLE_API_KEY")),
+        # "Groq Llama 3 70B (무료)":   ("llama3-70b-8192",             os.getenv("GROQ_API_KEY")),
+        # "Groq Mixtral (무료)":       ("mixtral-8x7b-32768",          os.getenv("GROQ_API_KEY")),
     }
 
-    provider_group = st.selectbox(
-        "모델 그룹",
-        list(PROVIDER_MODELS.keys()),
-        key="provider_group",
-    )
-    model_display = st.selectbox(
-        "모델",
-        list(PROVIDER_MODELS[provider_group].keys()),
-        key="model_display",
-    )
-    selected_model_id = PROVIDER_MODELS[provider_group][model_display]
+    model_display = st.selectbox("모델", list(MODELS.keys()), key="model_display")
+    selected_model_id, api_key = MODELS[model_display]
     st.caption(f"Model ID: `{selected_model_id}`")
 
     st.markdown('<hr class="section">', unsafe_allow_html=True)
 
-    # ── 2. 문서 업로드 ──────────────────────────────────────────────────────────
+    # ── 3. 문서 업로드 ──────────────────────────────────────────────────────────
     st.subheader("📁 문서 업로드")
-    uploaded_file = st.file_uploader(
-        "PDF 또는 TXT 파일을 업로드하세요",
-        type=["pdf", "txt"],
-        key="file_uploader",
-        help="최대 200 MB · PDF / TXT 형식 지원",
-    )
 
-    if uploaded_file:
-        if st.session_state.doc_name != uploaded_file.name:
+    if st.session_state.doc_name:
+        # 파일이 로드된 상태: 업로더 숨기고 파일명 + X 버튼 표시
+        safe_name = html.escape(st.session_state.doc_name)
+        st.markdown(
+            f'<div class="doc-name-bar">📄 <strong>{safe_name}</strong></div>',
+            unsafe_allow_html=True,
+        )
+        if st.button("✕", key="clear_file"):
+            for k, v in defaults.items():
+                st.session_state[k] = v
+            st.rerun()
+        chars = len(st.session_state.doc_text or "")
+        chunk_count = get_chunk_count(st.session_state.vector_store) if st.session_state.vector_store else 0
+    else:
+        # 파일 없음: 업로더 표시
+        uploaded_file = st.file_uploader(
+            "PDF 또는 TXT 파일을 업로드하세요",
+            type=["pdf", "txt"],
+            key="file_uploader",
+            help="최대 200 MB · PDF / TXT 형식 지원",
+        )
+        if uploaded_file:
             with st.spinner("텍스트 추출 중..."):
                 text = extract_text_from_file(uploaded_file)
                 st.session_state.doc_text = text
                 st.session_state.doc_name = uploaded_file.name
-                # 새 문서 → 대화·퀴즈 초기화
                 st.session_state.messages = []
                 st.session_state.feedback = {}
                 st.session_state.quiz_questions = []
                 st.session_state.quiz_answers = {}
                 st.session_state.quiz_submitted = False
                 st.session_state.vector_store = None
-            with st.spinner("벡터 DB 구축 중... (최초 실행 시 모델 다운로드로 수분 소요)"):
+            with st.spinner("벡터 DB 구축 중..."):
                 st.session_state.vector_store = build_vector_store(
                     text, source_name=uploaded_file.name
                 )
-            chunk_count = get_chunk_count(st.session_state.vector_store)
-            st.success(f"✅ **{uploaded_file.name}** 로드 완료")
-            chars = len(st.session_state.doc_text or "")
-            st.caption(f"추출 문자 수: {chars:,}자 · 청크 수: {chunk_count}개")
-    elif st.session_state.doc_name:
-        st.info(f"현재 문서: **{st.session_state.doc_name}**")
+            st.rerun()
 
     st.markdown('<hr class="section">', unsafe_allow_html=True)
-
-    # ── 3. 초기화 버튼 ─────────────────────────────────────────────────────────
-    if st.button("🗑️ 초기화 (문서·대화·퀴즈)", use_container_width=True):
-        for k, v in defaults.items():
-            st.session_state[k] = v
-        st.rerun()
-
 
 # ══════════════════════════════════════════════════════════════════════════════
 # MAIN AREA
 # ══════════════════════════════════════════════════════════════════════════════
-st.title("📄 OmniDocs")
 
-tab_chat, tab_quiz = st.tabs(["💬 Chat", "📝 Quiz"])
+col_chat, col_quiz = st.columns(2, gap="medium")
+
+# st.columns에 .card 클래스 주입 + 채팅 입력란을 왼쪽 카드의 자식으로 이동
+components.html(
+    """
+    <script>
+        function applyLayout() {
+            const doc = window.parent.document;
+            const block = doc.querySelector('[data-testid="stHorizontalBlock"]');
+            if (!block) { setTimeout(applyLayout, 50); return; }
+
+            // 두 컬럼에 .card 클래스 추가
+            const cols = block.querySelectorAll(':scope > [data-testid="stColumn"]');
+            cols.forEach(col => col.classList.add('card'));
+
+            const stBottom = doc.querySelector('[data-testid="stBottom"]');
+            const leftCard = cols[0];
+            if (!stBottom || !leftCard) { setTimeout(applyLayout, 50); return; }
+
+        }
+        applyLayout();
+    </script>
+    """,
+    height=0,
+)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# TAB 1 — CHAT
+# 왼쪽 패널 — CHAT
 # ══════════════════════════════════════════════════════════════════════════════
-with tab_chat:
+with col_chat:
+    st.markdown('<p class="panel-title">💬 Chat</p>', unsafe_allow_html=True)
+
     if st.session_state.doc_text:
-        # ── 스크롤 가능한 대화 영역 ──────────────────────────────────────────────
-        with st.container(height=480, border=False):
+        with st.container(height=460, border=False, key="chat_container"):
             for idx, msg in enumerate(st.session_state.messages):
                 if msg["role"] == "user":
                     st.markdown(
@@ -138,7 +167,6 @@ with tab_chat:
                         unsafe_allow_html=True,
                     )
 
-                    # 피드백 버튼 (assistant 메시지에만)
                     current_fb = st.session_state.feedback.get(idx)
                     col_like, col_dislike, col_spacer = st.columns([1, 1, 10])
                     with col_like:
@@ -156,15 +184,70 @@ with tab_chat:
                             )
                             st.rerun()
 
+            if st.session_state.messages and st.session_state.messages[-1]["role"] == "user":
+                answer_placeholder = st.empty()
+                full_answer = ""
+                for chunk in stream_rag_answer(
+                    query=st.session_state.messages[-1]["content"],
+                    doc_text=st.session_state.doc_text,
+                    model_id=selected_model_id,
+                    api_key=api_key,
+                    chat_history=st.session_state.messages[:-1],
+                    vector_store=st.session_state.vector_store,
+                ):
+                    full_answer += chunk
+                    answer_placeholder.markdown(
+                        f'<div class="chat-assistant">🤖 {full_answer}</div>',
+                        unsafe_allow_html=True,
+                    )
+                st.session_state.messages.append({"role": "assistant", "content": full_answer})
+                st.rerun()
+
+            components.html(
+                """
+                <script>
+                    const doc = window.parent.document;
+                    const candidates = doc.querySelectorAll('[data-testid="stVerticalBlockBorderWrapper"]');
+                    let chatContainer = null;
+                    for (const el of candidates) {
+                        if (el.scrollHeight > el.clientHeight) {
+                            chatContainer = el;
+                        }
+                    }
+                    if (chatContainer) {
+                        chatContainer.scrollTop = chatContainer.scrollHeight;
+                        const observer = new MutationObserver(() => {
+                            chatContainer.scrollTop = chatContainer.scrollHeight;
+                        });
+                        observer.observe(chatContainer, { childList: true, subtree: true });
+                    }
+                </script>
+                """,
+                height=0,
+            )
+
+    user_input = st.chat_input(
+        "문서를 먼저 업로드해주세요." if not st.session_state.doc_text else
+        "문서에 대해 무엇이든 물어보세요...",
+        disabled=not st.session_state.doc_text,
+        key="chat_input",
+    )
+
+    if user_input and st.session_state.doc_text:
+        if not api_key:
+            st.error("API Key를 입력해주세요.")
+            st.stop()
+        st.session_state.messages.append({"role": "user", "content": user_input})
+        st.rerun()
+
 
 # ══════════════════════════════════════════════════════════════════════════════
-# TAB 2 — QUIZ
+# 오른쪽 패널 — QUIZ
 # ══════════════════════════════════════════════════════════════════════════════
-with tab_quiz:
+with col_quiz:
+    st.markdown('<p class="panel-title">📝 Quiz</p>', unsafe_allow_html=True)
+
     if st.session_state.doc_text:
-        st.subheader("📝 문서 기반 퀴즈")
-        st.caption("업로드된 문서 내용을 바탕으로 객관식 3문제를 자동 생성합니다.")
-
         col_gen, _ = st.columns([2, 5])
         with col_gen:
             gen_btn = st.button(
@@ -174,17 +257,20 @@ with tab_quiz:
             )
 
         if gen_btn:
+            if not api_key:
+                st.error("API Key를 입력해주세요.")
+                st.stop()
             with st.spinner("퀴즈 생성 중..."):
                 questions = generate_quiz(
                     doc_text=st.session_state.doc_text,
                     model_id=selected_model_id,
+                    api_key=api_key,
                 )
             st.session_state.quiz_questions = questions
             st.session_state.quiz_answers = {}
             st.session_state.quiz_submitted = False
             st.rerun()
 
-        # ── 스크롤 가능한 퀴즈 영역 ──────────────────────────────────────────────
         with st.container(height=500, border=False):
             if st.session_state.quiz_questions:
                 with st.form(key="quiz_form"):
@@ -195,7 +281,7 @@ with tab_quiz:
                             f'</div>',
                             unsafe_allow_html=True,
                         )
-                        choice = st.radio(
+                        st.radio(
                             f"Q{q_idx + 1} 선택",
                             options=q["options"],
                             key=f"quiz_radio_{q_idx}",
@@ -210,14 +296,12 @@ with tab_quiz:
 
                 if submit_quiz:
                     for q_idx in range(len(st.session_state.quiz_questions)):
-                        radio_key = f"quiz_radio_{q_idx}"
                         st.session_state.quiz_answers[q_idx] = st.session_state.get(
-                            radio_key
+                            f"quiz_radio_{q_idx}"
                         )
                     st.session_state.quiz_submitted = True
                     st.rerun()
 
-                # 채점 결과 표시
                 if st.session_state.quiz_submitted:
                     st.markdown("---")
                     st.subheader("🏆 채점 결과")
@@ -247,24 +331,3 @@ with tab_quiz:
                         st.rerun()
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# CHAT INPUT — body 최하단 고정 (st.chat_input은 항상 페이지 하단에 고정됨)
-# ══════════════════════════════════════════════════════════════════════════════
-user_input = st.chat_input(
-    "👈 사이드바에서 PDF 또는 TXT 문서를 먼저 업로드해주세요." if not st.session_state.doc_text else
-    "문서에 대해 무엇이든 물어보세요...",
-    disabled=not st.session_state.doc_text,
-)
-
-if user_input and st.session_state.doc_text:
-    st.session_state.messages.append({"role": "user", "content": user_input})
-    with st.spinner("답변 생성 중..."):
-        answer = get_rag_answer(
-            query=user_input,
-            doc_text=st.session_state.doc_text,
-            model_id=selected_model_id,
-            chat_history=st.session_state.messages[:-1],
-            vector_store=st.session_state.vector_store,
-        )
-    st.session_state.messages.append({"role": "assistant", "content": answer})
-    st.rerun()
