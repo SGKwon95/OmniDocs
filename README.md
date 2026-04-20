@@ -171,7 +171,6 @@ streamlit run app.py
 - [x] FAISS 벡터 DB 구축 및 유사도 검색
 - [x] Claude / OpenAI 연동
 - [x] 스트리밍 답변 (실시간 렌더링)
-- [x] 대화 히스토리 관리
 - [x] 객관식 퀴즈 생성 및 채점
 - [x] 커스텀 CSS 스타일링 및 로고
 
