@@ -187,6 +187,7 @@ streamlit run app.py
 - [ ] AI에이전트(Tempo, Grafana, Loki 등) 연동
 - [ ] RAG 검색 알고리즘(BM25, Dense Retrieval, Hybrid Search 등) 선택 기능
 - [ ] 벡터 DB(Chroma, Pinecone) 변경 기능
+- [ ] 캐싱
 
 Latency (지연 시간)	검색부터 최종 답변 생성까지 걸리는 시간 (초)
 Token Usage (비용)	한 번의 질문에 소비되는 토큰 양
