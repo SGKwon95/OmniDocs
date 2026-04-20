@@ -183,7 +183,7 @@ streamlit run app.py
 - [ ] 로그인
 - [ ] 과거 쿼리 및 질문 내역 조회
 - [ ] 청크 수 / 청크 오버랩 수 조절 기능
-- [ ] 모델별 RAG 평가 및 비교 기능(Context Relevance, Faithfulness, Answer Relevance))
+- [ ] 모델별 RAG 성능 평가 및 비교 기능(Context Relevance, Faithfulness, Answer Relevance)
 - [ ] AI에이전트(Tempo, Grafana, Loki 등) 연동
 - [ ] RAG 검색 알고리즘(BM25, Dense Retrieval, Hybrid Search 등) 선택 기능
 - [ ] 벡터 DB(Chroma, Pinecone) 변경 기능
